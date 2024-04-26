@@ -1,0 +1,4347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Character Creator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body    {
+/* Общие стили */
+
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Таблица */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 12px;  /* Увеличиваем отступы */
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        th:nth-child(1), td:nth-child(1) {
+            width: 100px;  /* Увеличиваем ширину первой колонки */
+        }
+
+        th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) {
+            width: 500px;  /* Увеличиваем ширину второй и третьей колонок */
+        }
+
+        th:nth-child(n+4), td:nth-child(n+4) {
+            width: 70px;  /* Увеличиваем ширину четвертой и пятой колонок */
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            text-align: left;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;  /* Увеличиваем отступы */
+            padding: 20px;  /* Увеличиваем отступы */
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 350px;  /* Увеличиваем максимальную ширину */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+
+
+
+
+
+
+
+        #adddamagehpModal {
+            font-size: 20px
+            width: 100%;
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 100%;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 4px solid #ccc;
+        }
+
+
+
+        #adddamagehpModal .small-width1,
+        #adddamagehpModal .small-width4 {
+            width: 5%;
+            max-width: 10px; /* 10% от максимальной ширины модального окна */
+        }
+
+
+        #adddamagehpModal .small-width3,
+        #adddamagehpModal .small-width6 {
+            font-size: 2px;
+            width: 1%;
+            max-width: 5px; /* 10% от максимальной ширины модального окна */
+        }
+
+        #adddamagehpModal .small-width2 {
+            width: 5%;
+            max-width: 50px; /* 30% от максимальной ширины модального окна */
+        }
+
+        #adddamagehpModal .small-width5 {
+            width: 10%;
+            max-width: 90px; /* 30% от максимальной ширины модального окна */
+        }
+
+        #adddamagehpModal .small-width1 input,
+        #adddamagehpModal .small-width4 input {
+            width: 100%;
+            box-sizing: border-box; /* учитываем padding и border в общей ширине */
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */
+        }
+
+        #adddamagehpModal .small-width3 input,
+        #adddamagehpModal .small-width6 input {
+            font-size: 2px;
+            width: 50%;
+            box-sizing: border-box; /* учитываем padding и border в общей ширине */
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */
+        }
+
+        #adddamagehpModal .small-width2 input,
+        #adddamagehpModal .small-width5 input {
+            width: 100%;
+            box-sizing: border-box; /* учитываем padding и border в общей ширине */
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */            
+        }
+
+
+
+
+
+
+
+
+        .modal-content .button-container {
+            display: flex;
+            justify-content: space-between; /* Распределить столбцы по ширине контейнера */
+        }
+
+        .modal-content .column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content .column button {
+            margin-bottom: 5px; /* Отступ снизу */
+
+        }
+
+
+
+
+
+
+
+
+        @media (max-width: 768px) {
+
+            #characterTable th:nth-child(1), #characterTable td:nth-child(1) {
+                width: 10%; 
+                font-size: 13px; /* Уменьшаем размер шрифта для 4-10 столбцов */ 
+            }
+
+            #characterTable th:nth-child(2), #characterTable td:nth-child(2),
+            #characterTable th:nth-child(3), #characterTable td:nth-child(3) {
+                width: 23%;
+            }
+
+            #characterTable th:nth-child(n+4), #characterTable td:nth-child(n+4) {
+                width: 10%;
+                font-size: 8px; /* Уменьшаем размер шрифта для 4-10 столбцов */ 
+            }
+        
+
+
+
+
+
+
+
+        th, td {
+            padding: 2px 5px; /* Уменьшаем внутренние отступы */
+            font-size: 25px; /* Увеличиваем размер текста */
+
+        }
+        .hp-text, .mp-text {
+            position: relative;
+            display: block;
+
+        }
+
+        .hp-text::before, .mp-text::before {
+            content: attr(data-top-text);
+            position: absolute;
+            top: -2px ;
+            left: -4px ;
+            font-size: 20px;
+            line-height: 0;
+            text-align: left;
+            width: 100%; /* Устанавливаем ширину для родительского блока */
+            font-size: 20px ;
+            line-height: 0 ;
+
+        }
+
+        .hp-text::after, .mp-text::after {
+            content: attr(data-bottom-text);
+            position: absolute;
+            bottom: 0;
+    
+            right: 0;
+            font-size: 10px ;
+            bottom: -13px ;
+            /* Добавляем !important */
+            font-size: 10px;
+            text-align: right;
+            width: 100%; /* Устанавливаем ширину для родительского блока */
+        }
+
+
+
+
+        #addHPModal label, 
+        #addHPModal input,  {
+
+            font-size: 14px; /* Увеличиваем размер текста */
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */
+        }
+
+
+
+
+        }
+
+
+
+        #selectedCharacterName {
+            font-size: 24px;  /* Устанавливаем размер шрифта в 24 пикселя */
+            font-weight: bold;  /* Делаем шрифт жирным */
+        }
+
+
+
+
+
+
+
+
+        /* Стили для модального меню с выбором кнопок */
+        #characterModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #characterModal button {
+            flex: 1;
+            width: 200px; /* Установка одинаковой ширины */
+            margin: 5px; 
+            padding: 12px 0; /* Удаление горизонтальных отступов */
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            display: block; /* Преобразование кнопок в блочные элементы */
+            text-align: center; /* Выравнивание текста по центру */
+        }
+
+        #characterModal button:hover {
+            background-color: #0056b3;
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
+
+        #addHPModal .input-group label {
+            font-size: 1.1em;
+            line-height: 1.5;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #addHPModal .input-group input[type="number"] {
+            font-size: 1em;
+            width: 100%;
+            padding: 8px;
+            margin-top: -10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */
+        }
+
+
+
+        #addMPModal .input-group label {
+            font-size: 1.1em;
+            line-height: 1.5;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #addMPModal .input-group input[type="number"] {
+            font-size: 1em;
+            width: 100%;
+            padding: 8px;
+            margin-top: -5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            pattern: "[0-9]*"; /* Ограничение ввода только числами */
+            inputmode: "numeric"; /* Показывать клавиатуру с числами на мобильных устройствах */
+        }
+
+
+
+        @media (max-width: 768px) {
+            #addHPModal, #addMPModal {
+                width: 95%;
+            }
+        }
+
+
+
+
+
+
+
+
+
+        .hp-cell {
+            width: 200px; /* Фиксированная ширина полосы HP */
+            height: 20px; /* Высота полосы HP */
+            background-color: #F08080; /* Начальный красный цвет для HP */
+       
+        }
+
+        .hp-cell-inner {
+            height: 100%;
+         
+        }
+
+
+        .mp-cell {
+            width: 200px; /* Фиксированная ширина полосы MP */
+            height: 20px; /* Высота полосы MP */
+            background-color: #1E90FF; /* Начальный синий цвет для MP */
+        }
+
+        .mp-cell-inner {
+            height: 100%;
+        }
+
+
+
+
+
+        #characterForm.modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 1); /* Прозрачный белый фон */
+        }
+
+        #characterForm .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        #characterForm .close {
+            cursor: pointer;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #characterForm #actions {
+            margin-top: 20px;
+        }
+
+
+
+
+
+
+
+
+
+
+</style>
+
+
+
+</head>
+
+<body>
+    <div id="characterModal" class="modal">
+        <span class="close">&times;</span>
+
+        <!-- Первый ряд кнопок -->
+        <div class="button-row">
+            <button id="saveCharactersToFileBtn" onclick="saveCharactersToFile()">Сохранить</button>
+            <button id="loadCharactersFromFileBtn" onclick="loadCharactersToFile()">Загрузить</button>
+
+        </div>
+
+        <!-- Второй ряд кнопок -->
+        <div class="button-row">
+            <button id="createCharacterBtn">Создать персонажа</button>
+            <button id="loadCharacterBtn">Загрузить персонажа</button>
+
+        </div>
+        <!-- Второй ряд кнопок -->
+        <div class="button-row">
+
+            <button id="createmonstersBtn"></button>   
+            <button id="loadcharactersBtn"></button>                     
+        </div>
+
+
+        <div class="button-row">
+
+            <button id="closemenuBtn">Отмена</button>
+
+        </div>
+    </div>
+</div>
+
+
+
+    <div id="createCharacterModal" class="modal">
+        <div class="modal-content">
+            <span class="closeCreate">&times;</span>
+      
+            
+            <div class="input-group">
+                <label for="nameInput">Имя:</label>
+                <input type="text" id="nameInput" placeholder="Введите имя">
+            </div>
+            
+            <div class="input-group">
+                <label for="hpInput">ХП:</label>
+                <input type="number" id="hpInput" placeholder="Введите HP">
+            </div>
+            
+            <div class="input-group">
+                <label for="mpInput">МП:</label>
+                <input type="number" id="mpInput" placeholder="Введите MP">
+            </div>
+            
+            <div class="input-group">
+                <label for="armorInput">Броня:</label>
+                <input type="number" id="armorInput" placeholder="Введите броню">
+            </div>
+            
+            <div class="input-group">
+                <label for="damageInput">Урон:</label>
+                <input type="number" id="damageInput" placeholder="Введите урон">
+            </div>
+
+            <div class="input-group">
+                <label for="multiplayerInput">Мн.крита:</label>
+                <input type="number" id="multiplayerInput" placeholder="Введите мн.крита">
+            </div>
+
+            <div class="button-group">
+                <button id="addCharacterBtn">Добавить персонажа</button>
+                <button id="cancelBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="addNameModal" class="modal">
+        <div class="modal-content">
+  
+            
+            <div class="input-group">
+                <label for="nameInput"class="equipment-input" >Имя:</label>
+                <input class="equipment-input"  type="text" id="nameInput2" placeholder="">
+            </div>
+            
+            <div class="input-group">
+                <label for="hpInput">ХП:</label>
+                <input class="equipment-input"  type="number" id="hpInput2" placeholder="">
+            </div>
+            
+            <div class="input-group">
+                <label for="mpInput">МП:</label>
+                <input class="equipment-input"  type="number" id="mpInput2" placeholder="">
+            </div>
+            
+            <div class="input-group">
+                <label for="armorInput">Броня:</label>
+                <input class="equipment-input"  type="number" id="armorInput2" placeholder="">
+            </div>
+            
+            <div class="input-group">
+                <label for="damageInput">Урон:</label>
+                <input class="equipment-input"  type="number" id="damageInput2" placeholder="">
+            </div>
+
+            <div class="input-group">
+                <label for="multiplayerInput">Мн.крита:</label>
+                <input class="equipment-input"  type="number" id="multiplayerInput2" placeholder="">
+            </div>
+
+            <div class="button-group">
+                <button id="changecharacterbtn">Изменить монстрв</button>
+                <button id="cancelcharacterbtn">Отмена</button>
+                <button id="savecharacterbtn">Сохранить монстра</button>                
+                <button id="deleteharacterbtn">Удалить монстра</button>
+               
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+<!-- Модальное окно для HP персонажа -->
+    <div id="addHPModal" class="modal">
+        <div class="modal-content">
+
+            <div class="input-group">
+                <span id="selectedCharacterName"></span>
+            </div>   
+            <div class="input-group">
+                <label for="healValue">Восстановить HP:</label>
+                <input type="number" id="healValue" placeholder="Введите значение">
+            </div>
+            
+            <div class="input-group">
+                <label for="damageValue">Урон HP:</label>
+                <input type="number" id="damageValue" placeholder="Введите значение">
+            </div>
+
+            <div class="input-group">
+                <label for="max_hpValue">Максимальный HP:</label>
+                <input type="number" id="max_hpValue" placeholder="Введите значение">
+            </div>
+            <div class="button-group">
+                <button id="changehpValue">Применить</button>
+                <button id="canclehp_Value">Отмена</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+<!-- Модальное окно для MP персонажа -->
+    <div id="addMPModal" class="modal">
+        <div class="modal-content">
+            <div class="input-group">
+                <span id="selectedCharacterNameMP"></span>
+            </div>   
+             <div class="input-group">
+                <label for="healMPValue">Восстановить MP:</label>
+                <input type="number" id="healMPValue" placeholder="Введите значение">
+            </div>
+            
+            <div class="input-group">
+                <label for="damageMPValue">Отнять MP:</label>
+                <input type="number" id="damageMPValue" placeholder="Введите значение">
+            </div>
+
+            <div class="input-group">
+                <label for="maxmpValue">Максимальный MP:</label>
+                <input type="number" id="maxmpValue" placeholder="Введите значение">
+            </div>
+            <div class="button-group">
+                <button id="changempValue">Применить</button>
+                <button id="canclemp_Value">Отмена</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+        <!-- Модальное окно для урона по персонажу -->
+        <div id="adddamagehpModal" class="modal">
+            <div style="display: flex; align-items: flex-start;">
+                <!-- Заголовок -->
+                <table class="damage-table">
+                    <tr>
+                        <!-- Заголовок для первой колонки -->
+                        <td colspan="6" class="input-group" style ="text-align: left;">
+                            <span id="SelectedCharacterNamedamagehp"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- Левая колонка -->
+                        <td class="small-width1" style="vertical-align: top;">
+                            <input class="equipment-input1" type="text" id="helmetValue">
+                            <input class="equipment-input1" type="text" id="amuletValue">
+                            <input class="equipment-input1" type="text" id="ringValue">
+                            <input class="equipment-input1" type="text" id="earringValue">
+                            <input class="equipment-input1" type="text" id="leftArmorValue">
+                            <input class="equipment-input1" type="text" id="leftShouldersValue">
+                            <input class="equipment-input1" type="text" id="leftBraceletsValue">
+                            <input class="equipment-input1" type="text" id="leftGlovesValue">
+                            <input class="equipment-input1" type="text" id="leftPantsValue">
+                            <input class="equipment-input1" type="text" id="leftBootsValue">                   
+                        </td>
+
+                        <!-- Средняя колонка -->
+                        <td class="small-width2" style="vertical-align: top;">
+                            <input class="equipment-input2" type="number" id="helmetValuehp" placeholder="Шлем">
+                            <input class="equipment-input2" type="number" id="amuletValuehp" placeholder="Амулет">
+                            <input class="equipment-input2" type="number" id="ringValuehp" placeholder="Кольцо">
+                            <input class="equipment-input2" type="number" id="earringValuehp" placeholder="Серьга">
+                            <input class="equipment-input2" type="number" id="leftArmorValuehp" placeholder="Броня_Л">
+                            <input class="equipment-input2" type="number" id="leftShouldersValuehp" placeholder="Наплечник_Л">
+                            <input class="equipment-input2" type="number" id="leftBraceletsValuehp" placeholder="Браслет_Л">
+                            <input class="equipment-input2" type="number" id="leftGlovesValuehp" placeholder="Перчатка_Л">
+                            <input class="equipment-input2" type="number" id="leftPantsValuehp" placeholder="Штаны_Л">
+                            <input class="equipment-input2" type="number" id="leftBootsValuehp" placeholder="Сапог_Л">
+                            <button id="changedamagehpValue">Применить</button>
+                        </td>
+
+                        <!-- Правая колонка -->
+                        <td class="small-width1" style="vertical-align: top;">
+                            <input class="equipment-input3" type="number" id="helmetcrit">
+                            <input class="equipment-input3" type="number" id="amuletcrit">
+                            <input class="equipment-input3" type="number" id="ringcrit">
+                            <input class="equipment-input3" type="number" id="earringcrit">
+                            <input class="equipment-input3" type="number" id="leftArmorcrit">
+                            <input class="equipment-input3" type="number" id="leftShoulderscrit">
+                            <input class="equipment-input3" type="number" id="leftBraceletscrit">
+                            <input class="equipment-input3" type="number" id="leftGlovescrit">
+                            <input class="equipment-input3" type="number" id="leftPantscrit">
+                            <input class="equipment-input3" type="number" id="leftBootscrit">
+                        </td>
+
+                        <!-- Левая колонка 2 -->
+                        <td class="small-width1" style="vertical-align: top;">
+                            <input class="equipment-input" type="text" id="cloakValue">
+                            <input class="equipment-input" type="text" id="beltValue">
+                            <input class="equipment-input" type="text" id="secondRingValue">
+                            <input class="equipment-input" type="text" id="secondEarringValue">
+                            <input class="equipment-input" type="text" id="rightArmorValue">
+                            <input class="equipment-input" type="text" id="rightShouldersValue">
+                            <input class="equipment-input" type="text" id="rightBraceletsValue">
+                            <input class="equipment-input" type="text" id="rightGlovesValue">
+                            <input class="equipment-input" type="text" id="rightPantsValue">
+                            <input class="equipment-input" type="text" id="rightBootsValue">
+                            <input class="equipment-input" type="text" id="allarmorValue">                                  
+                        </td>   
+                        <!-- Средняя колонка 2 -->
+                        <td class="small-width2" style="vertical-align: top;">
+                           <input class="equipment-input5" type="number" id="cloakValuehp" placeholder="Плащ">
+                            <input class="equipment-input5" type="number" id="beltValuehp" placeholder="Пояс">
+                            <input class="equipment-input5" type="number" id="secondRingValuehp" placeholder="Кольцо_2">
+                            <input class="equipment-input5" type="number" id="secondEarringValuehp" placeholder="Серьга_2">
+                            <input class="equipment-input5" type="number" id="rightArmorValuehp" placeholder="Броня_П">
+                            <input class="equipment-input5" type="number" id="rightShouldersValuehp" placeholder="Наплечник_П">
+                            <input class="equipment-input5" type="number" id="rightBraceletsValuehp" placeholder="Браслет_П">
+                            <input class="equipment-input5" type="number" id="rightGlovesValuehp" placeholder="Перчатка_П">
+                            <input class="equipment-input5" type="number" id="rightPantsValuehp" placeholder="Штаны_П">
+                            <input class="equipment-input5" type="number" id="rightBootsValuehp" placeholder="Сапог_П">
+                            <button id="closeDamageHpModalBtn">Отмена</button>
+                        </td>
+
+                        <!-- Правая колонка 2 -->
+                        <td class="small-width1" style="vertical-align: top;">
+                            <input class="equipment-input6" type="number" id="cloakcrit">
+                            <input class="equipment-input6" type="number" id="beltcrit">
+                            <input class="equipment-input6" type="number" id="secondRingcrit">
+                            <input class="equipment-input6" type="number" id="secondEarringcrit">
+                            <input class="equipment-input6" type="number" id="rightArmorcrit">
+                            <input class="equipment-input6" type="number" id="rightShoulderscrit">
+                            <input class="equipment-input6" type="number" id="rightBraceletscrit">
+                            <input class="equipment-input6" type="number" id="rightGlovescrit">
+                            <input class="equipment-input6" type="number" id="rightPantscrit">
+                            <input class="equipment-input6" type="number" id="rightBootscrit">                           
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+
+
+
+
+
+    <!-- Модальное окно для создания ресурса -->
+    <div id="addresourceModal" class="modal">
+        <div class="modal-content">
+            <div>
+                <label for="nameresourceValue">Имя ресурса:</label>
+                <input type="text" id="nameresourceValue" placeholder="Введите название">
+            </div>
+            <div>
+                <label for="numberresourceValue">Количество:</label>
+                <input type="number" id="numberresourceValue" placeholder="Введите значение">
+            </div>    
+            <div>
+                <label for="max_numberresourceValue">Макс.количество:</label>
+                <input type="number" id="max_numberresourceValue" placeholder="Введите значение">
+            </div>   
+
+            <div class="button-group">
+                <button id="createresourceBtn">Создать</button>
+                <button id="recreateresourceBtn">Редактировать</button>                
+                <button id="deleteresourceBtn">Удалить</button>                
+                <button id="cancelresorcerbtn">Отмена</button>
+            </div>
+         
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Модальное окно для создания оружия -->
+    <div id="addweaponsModal" class="modal">
+        <div class="modal-content">
+            <table>
+                <tr>
+                    <td>
+                        <input type="text" id="nameweaponsValue" placeholder="Имя оружия:">                
+                        <input type="number" id="damageweaponsValue" placeholder="Урон:">
+                        <input type="number" id="max_damageweaponsValue" placeholder="Макс.урон:">
+                    </td>   
+                    <td class="button-group" >
+                        <button id="createweaponBtn" >Создать</button>
+                        <button id="recreateweaponBtn">Редакт</button>                
+                        <button id="deleteweaponBtn">Удалить</button>                
+                        <button id="cancelweaponrbtn">Отмен</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Модальное окно для урона по персонажу -->
+    <div id="adddamagehitModal" class="modal">
+        <div class="modal-content">
+            <!-- Заголовок -->
+            <span id="SelectedCharacterNamedamagehit" style="font-size: 25px"></span>
+
+            <!-- Контейнер для кнопок -->
+            <div class="button-container">
+                <!-- Первый столбец кнопок -->
+                <div class="column">
+                    <button class="equipment-input" type="number" id="helmetValue0">Шлем</button>
+                    <button class="equipment-input" type="number" id="amuletValue0">Амулет</button>
+                    <button class="equipment-input" type="number" id="ringValue0">Кольцо</button>
+                    <button class="equipment-input" type="number" id="earringValue0">Серьга</button>
+                    <button class="equipment-input" type="number" id="leftArmorValue0">Броня_Л</button>
+                    <button class="equipment-input" type="number" id="leftShouldersValue0">Наплечник_Л</button>
+                    <button class="equipment-input" type="number" id="leftBraceletsValue0">Браслет_Л</button>
+                    <button class="equipment-input" type="number" id="leftGlovesValue0">Перчатка_Л</button>
+                    <button class="equipment-input" type="number" id="leftPantsValue0">Штаны_Л</button>
+                    <button class="equipment-input" type="number" id="leftBootsValue0">Сапог_Л</button>
+                </div>
+
+                <!-- Второй столбец кнопок -->
+                <div class="column">
+                    <button class="equipment-input" type="number" id="cloakValue0">Плащ</button>
+                    <button class="equipment-input" type="number" id="beltValue0">Пояс</button>
+                    <button class="equipment-input" type="number" id="secondRingValue0">Кольцо_2</button>
+                    <button class="equipment-input" type="number" id="secondEarringValue0">Серьга_2</button>
+                    <button class="equipment-input" type="number" id="rightArmorValue0">Броня_П</button>
+                    <button class="equipment-input" type="number" id="rightShouldersValue0">Наплечник_П</button>
+                    <button class="equipment-input" type="number" id="rightBraceletsValue0">Браслет_П</button>
+                    <button class="equipment-input" type="number" id="rightGlovesValue0">Перчатка_П</button>
+                    <button class="equipment-input" type="number" id="rightPantsValue0">Штаны_П</button>
+                    <button class="equipment-input" type="number" id="rightBootsValue0">Сапог_П</button>
+                    <button id="closeDamageHpModalBtn2">Выход</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Модальное окно для урона по персонажу -->
+    <div id="addcharaterhit2Modal" class="modal">
+        <div class="modal-content">
+            <!-- Заголовок -->
+            <span id="SelectedCharacterNamedamagehp"></span>
+
+            <!-- Контейнер для кнопок -->
+            <div class="button-container">
+
+            </div>
+            
+        </div>
+    </div>
+
+
+
+    <table id="characterTable">
+        <thead>
+            <tr>                       
+                <th id="nameHeader">Name</th>
+                <th>HP</th>
+                <th>MP</th>
+                <th>A</th>                              
+            </tr>
+        </thead>
+        <tbody id="characterList"></tbody>
+    </table>
+
+    <!-- Таблица для строки текста и кнопок -->
+    <table id="footerTable" style="width: 100%; text-align: center; position: absolute; bottom: 0;">
+        <tr>
+            <td id="fightdisply"></td>
+        </tr>
+        <tr>
+            <td>
+                <button style="margin-right: 10px;" id="weaponbutton">Оружие</button>
+                <button style="margin-right: 10px;" id="armorbutton">Броня</button>
+                <button style="margin-right: 10px;" id="skillsbutton">Скилы</button>
+                <button style="margin-right: 10px;" id="resourcebutton">Ресурс</button>               
+                <button id="damagetakenbutton">Урон</button>
+            </td>
+        </tr>
+        <!-- Добавленные ряды кнопок -->
+        <tr>
+            <td>
+                <button style="margin-right: 10px;" id="characteristic1button">Характеристика</button>
+                <button style="margin-right: 10px;" id="characteristic2button">Экипировка</button>
+            </td>
+        </tr>
+
+        <!-- Конец добавленных рядов кнопок -->
+    </table>
+
+
+
+
+
+    <div id="characterForm" class="modal">
+        <div id="header">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="idcharacters" id="characterId">ID: </td>
+                        <td class="characterName" id="characterName">Имя: </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="characteristics">
+            <table>
+                <tbody>
+                    <tr onclick="addCharacteristic()">
+                        <td colspan="2">Характеристики</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="abilities">
+            <table>
+                <tbody>
+                    <tr onclick="addAbility()">
+                        <td colspan="2">Навыки</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="skills">
+            <table>
+                <tbody>
+                    <tr onclick="addSkills()">
+                        <td colspan="2">Способности</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="actions">
+            <button onclick="openModal()">Сохранить</button>
+            <button onclick="closeModalcharacteristic()">Отмена</button>
+        </div>
+
+        <!-- Модальное окно -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Подтвердите сохранение</h2>
+                <button onclick="saveCharacter()">Сохранить</button>
+                <button onclick="closeModalcharacteristic()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <script>
+
+
+
+
+
+
+        // Получаем элемент заголовка Name
+        const nameHeader = document.getElementById('nameHeader');
+
+        // Получаем модальное окно characterModal
+        const characterModal = document.getElementById('characterModal');
+
+        // Получаем кнопку закрытия модального окна
+        const closeBtn = document.querySelector('#characterModal .close');
+
+        // Добавляем обработчик событий на заголовок Name
+        nameHeader.addEventListener('click', function() {
+            // Показываем модальное окно
+            characterModal.style.display = 'block';
+        });
+
+        // Добавляем обработчик событий на кнопку закрытия модального окна
+        closeBtn.addEventListener('click', function() {
+            // Скрываем модальное окно
+            characterModal.style.display = 'none';
+        });
+        // Получаем кнопку "Создать персонажа"
+        const createCharacterBtn = document.getElementById('createCharacterBtn');
+
+        // Получаем модальное окно createCharacterModal
+        const createCharacterModal = document.getElementById('createCharacterModal');
+
+        // Получаем кнопку закрытия модального окна createCharacterModal
+        const closeCreateBtn = document.querySelector('#createCharacterModal .closeCreate');
+
+        // Добавляем обработчик событий на кнопку "Создать персонажа"
+        createCharacterBtn.addEventListener('click', function() {
+            // Показываем модальное окно createCharacterModal
+            createCharacterModal.style.display = 'block';
+        });
+
+        // Добавляем обработчик событий на кнопку закрытия модального окна createCharacterModal
+        closeCreateBtn.addEventListener('click', function() {
+            // Скрываем модальное окно createCharacterModal
+            createCharacterModal.style.display = 'none';
+        });
+
+
+
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+
+
+        function closeModal() {
+            const characterModal = document.getElementById('characterModal');
+            characterModal.style.display = 'none';
+        }
+
+        const closemenuBtn = document.getElementById('closemenuBtn');
+        closemenuBtn.addEventListener('click', closeModal);
+
+
+
+
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const createMonsterBtn = document.getElementById('createmonstersBtn');
+            const addNameModal = document.getElementById('addNameModal');
+
+            if (createMonsterBtn && addNameModal) {
+                createMonsterBtn.addEventListener('click', () => {
+                    addNameModal.style.display = 'block';
+                    addNameModal.classList.add('monster');
+                });
+            } else {
+                console.error('Element not found');
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+        let characters = [];
+
+        // База данных
+        const db = {
+            characters: [],
+            resources: {
+                helmet: 0,
+                amulet: 0,
+                ring: 0,
+                earring: 0,
+                leftArmor: 0,
+                leftShoulders: 0,
+                leftBracelets: 0,
+                leftGloves: 0,
+                leftPants: 0,
+                leftBoots: 0,
+                cloak: 0,
+                belt: 0,
+                secondRing: 0,
+                secondEarring: 0,
+                rightArmor: 0,
+                rightShoulders: 0,
+                rightBracelets: 0,
+                rightGloves: 0,
+                rightPants: 0,
+                rightBoots: 0,
+                
+                helmetcrit: 2,
+                amuletcrit: 2,
+                ringcrit: 2,
+                earringcrit: 2,
+                leftArmorcrit: 2,
+                leftShoulderscrit: 2,
+                leftBraceletscrit: 2,
+                leftGlovescrit: 2,
+                leftPantscrit: 2,
+                leftBootscrit: 2,
+                cloakcrit: 2,
+                beltcrit: 2,
+                secondRingcrit: 2,
+                secondEarringcrit: 2,
+                rightArmorcrit: 2,
+                rightShoulderscrit: 2,
+                rightBraceletscrit: 2,
+                rightGlovescrit: 2,
+                rightPantscrit: 2,
+                rightBootscrit: 2,
+            }
+        };
+
+
+        function addCharacter(name, hp, mp, armor, damage, multiplayer) {
+            const character = {
+                id: characters.length + 1,
+                name: name,
+                hp: hp,
+                max_hp: hp,
+                mp: mp,
+                max_mp: mp,
+                armor: "",
+                damage: "",
+                multiplayer: multiplayer,               
+                skills: "",
+
+
+                helmet: armor,
+                amulet: armor,
+                ring: armor,
+                earring: armor,
+                leftArmor: armor,
+                leftShoulders: armor,
+                leftBracelets: armor,
+                leftGloves: armor,
+                leftPants: armor,
+                leftBoots: armor,
+                cloak: armor,
+                belt: armor,
+                secondRing: armor,
+                secondEarring: armor,
+                rightArmor: armor,
+                rightShoulders: armor,
+                rightBracelets: armor,
+                rightGloves: armor,
+                rightPants: armor,
+                rightBoots: armor,
+                allarmor: 0,        
+
+                helmetcrit: 2,
+                amuletcrit: 2,
+                ringcrit: 2,
+                earringcrit: 2,
+                leftArmorcrit: 2,
+                leftShoulderscrit: 2,
+                leftBraceletscrit: 2,
+                leftGlovescrit: 2,
+                leftPantscrit: 2,
+                leftBootscrit: 2,
+                cloakcrit: 2,
+                beltcrit: 2,
+                secondRingcrit: 2,
+                secondEarringcrit: 2,
+                rightArmorcrit: 2,
+                rightShoulderscrit: 2,
+                rightBraceletscrit: 2,
+                rightGlovescrit: 2,
+                rightPantscrit: 2,
+                rightBootscrit: 2,
+
+
+
+
+  
+                weapon_1: damage,
+                weapon_2: damage,
+                weapon_3: damage,
+                weapon_4: damage,
+                weapon_5: damage,
+                weapon_6: damage,
+                weapon_7: damage,
+                weapon_8: damage,
+                weapon_9: damage,
+                weapon_10: damage,
+
+
+            };
+            characters.push(character);
+            console.log("Персонаж добавлен:", character);
+            displayCharacterList();
+
+        }
+
+
+
+
+
+        function displayCharacterList() {
+            const characterList = document.getElementById('characterList');
+            characterList.innerHTML = ''; 
+
+            characters.forEach(character => {
+                // Инициализируем row перед использованием
+                const row = document.createElement('tr');
+
+
+
+                const nameCell = document.createElement('td');
+                nameCell.classList.add('name-cell'); 
+                nameCell.setAttribute('data-character-id', character.id); // Добавляем атрибут data-character-id
+                nameCell.textContent = character.name;
+                row.appendChild(nameCell);
+
+
+                const hpCell = document.createElement('td');
+                hpCell.classList.add('hp-cell'); 
+                hpCell.classList.add('hp-bar'); 
+                hpCell.setAttribute('data-character-id', character.id); 
+                hpCell.innerHTML = `
+                    <div class="hp-bar-inner"></div>
+                    <span class="hp-text" 
+                          data-top-text="${character.hp}" 
+                          data-bottom-text="${character.max_hp}"></span>
+                `;
+                row.appendChild(hpCell);
+
+
+                const mpCell = document.createElement('td');
+                mpCell.classList.add('mp-cell'); 
+                mpCell.classList.add('mp-bar'); 
+                mpCell.setAttribute('data-character-id', character.id); 
+                mpCell.innerHTML = `
+                    <div class="mp-bar-inner"></div>
+                    <span class="mp-text" 
+                          data-top-text="${character.mp}" 
+                          data-bottom-text="${character.max_mp}"></span>
+                `;
+                row.appendChild(mpCell);
+
+
+
+                const activerowCell = document.createElement('td');
+                activerowCell.classList.add('activerow-cell'); // Добавляем класс 'resource-cell' к 
+                activerowCell.setAttribute('data-character-id', character.id); // Добавляем 
+                row.appendChild(activerowCell);
+
+
+
+
+
+
+                function updateHpMpData(cell, currentHp, maxHp) {
+                    const hpBarInner = cell.querySelector('.hp-bar-inner');
+                    const hpText = cell.querySelector('.hp-text');
+
+                    if (hpBarInner && hpText) {
+                        const hpPercent = (currentHp / maxHp) * 100;
+                        hpBarInner.style.width = `${hpPercent}%`;
+                        hpText.textContent = `${currentHp} ${maxHp}`;
+                        console.log(`Updated HP in cell with ID: ${cell.getAttribute('data-character-id')}`);
+                    } else {
+                        console.error(`HP elements not found in cell with ID: ${cell.getAttribute('data-character-id')}`);
+                    }
+                }
+
+                function updateMpMpData(cell, currentMp, maxMp) {
+                    const mpBarInner = cell.querySelector('.mp-bar-inner');
+                    const mpText = cell.querySelector('.mp-text');
+
+                    if (mpBarInner && mpText) {
+                        const mpPercent = (currentMp / maxMp) * 100;
+                        mpBarInner.style.width = `${mpPercent}%`;
+                        mpText.textContent = `${currentMp} ${maxMp}`;
+                        console.log(`Updated MP in cell with ID: ${cell.getAttribute('data-character-id')}`);
+                    } else {
+                        console.error(`MP elements not found in cell with ID: ${cell.getAttribute('data-character-id')}`);
+                    }
+                }
+
+                function updateNameData(cell, newName) {
+                    if (cell && newName) {
+                        cell.textContent = newName;
+                        console.log(`Updated name in cell with ID: ${cell.getAttribute('data-character-id')}`);
+                    } else {
+                        console.error(`Failed to update name in cell. Cell or newName is undefined.`);
+                    }
+                }
+
+
+
+
+
+
+
+
+                characterList.appendChild(row);
+            });
+
+
+
+
+
+            const nameCells = document.querySelectorAll('.name-cell');
+            console.log("Found hp cells:", nameCells.length);
+            nameCells.forEach(cell => {
+                cell.addEventListener('click', openNameModal);
+            });
+
+
+
+
+            const hpCells = document.querySelectorAll('.hp-cell');
+            console.log("Found hp cells:", hpCells.length);
+            hpCells.forEach(cell => {
+                cell.addEventListener('click', openHPModal);
+            });
+
+
+            const mpCells = document.querySelectorAll('.mp-cell');
+            console.log("Found mp cells:", mpCells.length);
+            mpCells.forEach(cell => {
+                cell.addEventListener('click', openMPModal);
+            });
+
+            const activerowCell = document.querySelectorAll('.activerow-cell');
+            console.log("Found mp cells:", activerowCell.length);
+            activerowCell.forEach(cell => {
+                cell.addEventListener('click', activerowCellclicked);
+            });
+
+
+
+
+        }
+
+
+        function updateResourceData(resourceName, characterId) {
+            const resourceCells = document.querySelectorAll(`.${resourceName}-cell`);
+            resourceCells.forEach(cell => {
+                if (cell.getAttribute('data-character-id') === characterId) {
+                    const resourceKey = resourceName.replace('-cell', ''); // Получаем ключ ресурса из имени ячейки
+                    const character = characters.find(char => char.id === characterId);
+                    if (character && character.hasOwnProperty(resourceKey)) {
+                        cell.textContent = `${character[resourceKey]} / ${db.resources[`max_${resourceKey}`]}`;
+                    }
+                }
+            });
+        }
+
+
+
+        function saveCharactersToFile() {
+            const jsonCharacters = JSON.stringify(characters, null, 4);
+
+            const blob = new Blob([`var savedCharacters = ${jsonCharacters};`], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+
+            // Попытка изменить папку сохранения
+            a.setAttribute('download', 'Characters.js');
+            a.setAttribute('href', 'filesystem:' + window.location.origin + '/temporary/Characters.js'); 
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            URL.revokeObjectURL(url);
+            closeModal(); 
+        }
+
+        function saveCharactersToFile() {
+            // Преобразование массива characters в строку JSON
+            const jsonCharacters = JSON.stringify(characters, null, 4); // null, 4 для красивого форматирования
+
+            const blob = new Blob([`var savedCharacters = ${jsonCharacters};`], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'Characters.js';
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            closeModal(); 
+        }
+
+
+
+        function loadCharactersToFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.js'; // Позволяем выбирать только JS файлы
+
+            input.onchange = event => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = event => {
+                    const content = event.target.result;
+                    console.log('Содержимое файла:', content); // Добавим для дебаггинга
+                    try {
+                        eval(content); // Выполняем содержимое файла
+                        
+                        if (typeof savedCharacters !== 'undefined') {
+                            characters = savedCharacters; // Обновляем массив characters
+                            displayCharacterList(); // Обновляем список персонажей после загрузки
+                        } else {
+                            console.error('Массив savedCharacters не найден в загруженном файле.');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка выполнения кода из файла:', error); // Добавим для дебаггинга
+                    }
+                };
+
+                reader.onerror = error => {
+                    console.error('Ошибка чтения файла:', error); // Добавим для дебаггинга
+                };
+
+                if (file) {
+                    reader.readAsText(file); // Читаем файл как текст
+                } else {
+                    console.error('Файл не выбран'); // Добавим для дебаггинга
+                }
+                closeModal(); 
+            };
+
+            input.click();
+        }
+
+
+
+
+
+
+
+
+
+        function loadSingleCharacterJS() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.js'; // Позволяем выбирать только JS файлы
+
+            input.onchange = event => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = event => {
+                    const content = event.target.result;
+                    console.log('Содержимое файла:', content); // Добавим для дебаггинга
+                    try {
+                        eval(content); // Выполняем содержимое файла
+                        
+                        if (typeof savedCharacter !== 'undefined') {
+                            // Присваиваем новый ID персонажу
+                            savedCharacter.id = characters.length + 1;
+
+                            // Добавляем персонажа в конец массива characters
+                            characters.push(savedCharacter);
+
+                            displayCharacterList(); // Обновляем список персонажей после загрузки
+                        } else {
+                            console.error('Персонаж не найден в загруженном файле.');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка выполнения кода из файла:', error); // Добавим для дебаггинга
+                    }
+                };
+
+                reader.onerror = error => {
+                    console.error('Ошибка чтения файла:', error); // Добавим для дебаггинга
+                };
+
+                if (file) {
+                    reader.readAsText(file); // Читаем файл как текст
+                } else {
+                    console.error('Файл не выбран'); // Добавим для дебаггинга
+                }
+                closeModal(); 
+            };
+
+            input.click();
+        }
+
+        // Привязываем функцию к кнопке "Загрузить персонажа"
+        document.getElementById('loadCharacterBtn').addEventListener('click', function() {
+            loadSingleCharacterJS();
+        });
+
+
+
+
+
+
+
+
+
+        let currentCell = null; // переменная для хранения текущей активной ячейки
+        let currentCharacterId = null; // переменная для хранения ID текущего персонажа
+
+        function activerowCellclicked(event) {
+            // Если есть текущая активная ячейка, окрашиваем её в белый цвет
+            if (currentCell) {
+                currentCell.style.backgroundColor = 'white';
+                // Удаляем контейнер с номером строки из предыдущей активной ячейки
+                const prevContainer = currentCell.querySelector('.row-index-container');
+                if (prevContainer) {
+                    currentCell.removeChild(prevContainer);
+                }
+            }
+
+            // Получаем новую активную ячейку
+            const cell = event.currentTarget;
+
+            // Окрашиваем ячейку в ярко-зелёный цвет
+            cell.style.backgroundColor = '#00FF00'; // Ярко-зелёный
+
+            // Получаем строку, в которой находится ячейка
+            const row = cell.parentNode;
+
+            // Получаем номер строки
+            const rowIndex = Array.from(row.parentNode.children).indexOf(row) + 1;
+
+            // Получаем ID персонажа из атрибута данных ячейки
+            const characterId = cell.getAttribute('data-character-id');
+            currentCharacterId = characterId; // Сохраняем ID текущего персонажа
+
+            // Создаем контейнер с числовым значением номера строки
+            const container = document.createElement('div');
+            container.textContent = rowIndex;
+            container.classList.add('row-index-container');
+            container.style.backgroundColor = 'white';
+            container.style.color = 'black';
+            container.style.padding = '2px 5px';
+            container.style.borderRadius = '4px';
+            container.style.position = 'absolute';
+            container.style.top = '50%';
+            container.style.left = '50%';
+            container.style.transform = 'translate(-50%, -50%)';
+
+            // Добавляем контейнер к ячейке
+            cell.appendChild(container);
+
+            // Обновляем текущую активную ячейку
+            currentCell = cell;
+
+            // Выводим номер строки в консоль
+            console.log(`Clicked on row ${rowIndex}`);
+
+        }
+
+        // Добавляем обработчик клика к каждой ячейке с классом 'activerow-cell'
+        const activerowCells = document.querySelectorAll('.activerow-cell');
+        activerowCells.forEach(cell => {
+            cell.addEventListener('click', activerowCellclicked);
+        });
+
+        // Обработчик клика по кнопке "Оружие"
+        document.getElementById('weaponbutton').addEventListener('click', function() {
+            if (currentCharacterId) {
+                // Открываем модальное окно с оружием для выбранного персонажа
+                openweaponsModal({ currentTarget: { getAttribute: () => currentCharacterId } });
+            } else {
+                console.log("No active row selected.");
+            }
+        });
+
+
+
+
+
+
+
+        // ... (остальной код не изменился)
+        addCharacterBtn.addEventListener('click', () => {
+            const name = document.getElementById('nameInput').value;
+            const hp = parseInt(document.getElementById('hpInput').value, 10); // Добавляем основание для parseInt
+            const mp = parseInt(document.getElementById('mpInput').value, 10); // Добавляем основание для parseInt
+            const armor = parseInt(document.getElementById('armorInput').value, 10); // Добавляем основание для parseInt
+            const damage = parseInt(document.getElementById('damageInput').value, 10); // Добавляем основание для parseInt
+            const crit = parseInt(document.getElementById('multiplayerInput').value, 10); // Извлекаем значение crit
+            const crit_down = 0; // Извлекаем значение crit
+            const allarmor = 0; // Извлекаем значение crit
+
+            if (name !== '' && !isNaN(hp) && !isNaN(mp) && !isNaN(armor) && !isNaN(damage) && !isNaN(crit)) { // Добавляем проверку на isNaN и не пустое имя
+                addCharacter(name, hp, mp, armor, damage, crit, crit_down); // Передаем crit как аргумент
+                const createCharacterModal = document.getElementById('createCharacterModal');
+                if (createCharacterModal) {
+                    createCharacterModal.style.display = 'none';  // Закрыть модальное окно для создания персонажа
+                }
+                characterModal.style.display = 'none';  // Закрыть основное модальное окно
+            } else {
+                alert('Заполните все поля!');
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Отслеживаем клик по ячейке "Имя"
+        const nameCells = document.querySelectorAll('.name-cell');
+
+        nameCells.forEach(cell => {
+            cell.addEventListener('click', openNameModal);
+        });
+
+        const inputFieldsNames = document.querySelectorAll('.equipment-input');
+
+        // Добавляем обработчик событий для модального окна
+        document.getElementById('addNameModal').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                applyNameChanges();
+            }
+        });
+
+        function handleEnterKeyName(event) {
+            if (event.key === 'Enter') {
+                const characterId = document.querySelector('.name-cell.active').getAttribute('data-character-id');
+                const nameValue = document.getElementById('nameInput2').value.trim();  // Убедитесь, что имя является строкой
+
+                // Проверка на пустое имя
+                if (!nameValue) {
+                    console.error("Name cannot be empty");
+                    return;
+                }
+
+                const armorValue = parseInt(document.getElementById('armorInput2').value, 10);
+                const damageValue = parseInt(document.getElementById('damageInput2').value, 10);
+                const multiplayerValue = parseInt(document.getElementById('multiplayerInput2').value, 10);
+                const hpvalue = parseInt(document.getElementById('hpInput2').value, 10);
+                const mpvalue = parseInt(document.getElementById('mpInput2').value, 10);
+
+
+                const updatedValues = {
+                    name: nameValue,
+                    hp: hpvalue,
+                    max_hp: hpvalue,  
+                    mp: mpvalue,
+                    max_mp: mpvalue,
+                    helmet: armorValue,
+                    amulet: armorValue,
+                    ring: armorValue,
+                    earring: armorValue,
+                    leftArmor: armorValue,
+                    leftShoulders: armorValue,
+                    leftBracelets: armorValue,
+                    leftGloves: armorValue,
+                    leftPants: armorValue,
+                    leftBoots: armorValue,
+                    cloak: armorValue,
+                    belt: armorValue,
+                    secondRing: armorValue,
+                    secondEarring: armorValue,
+                    rightArmor: armorValue,
+                    rightShoulders: armorValue,
+                    rightBracelets: armorValue,
+                    rightGloves: armorValue,
+                    rightPants: armorValue,
+                    rightBoots: armorValue,
+                    weapon_1: damageValue,
+                    weapon_2: damageValue,
+                    weapon_3: damageValue,
+                    weapon_4: damageValue,
+                    weapon_5: damageValue,
+                    weapon_6: damageValue,
+                    weapon_7: damageValue,
+                    weapon_8: damageValue,
+                    weapon_9: damageValue,
+                    weapon_10: damageValue,
+                    multiplayer: multiplayerValue,
+                };
+
+
+                updateCharacterNames(characterId, updatedValues);
+            }
+        }
+
+        // Удаляем старые обработчики событий
+        inputFieldsNames.forEach(input => {
+            input.removeEventListener('keydown', handleEnterKeyName);
+        });
+
+        // Добавляем новые обработчики событий
+        inputFieldsNames.forEach(input => {
+            input.addEventListener('keydown', handleEnterKeyName);
+        });
+
+
+
+        function openNameModal(event) {
+            closeAllModals();
+            // Устанавливаем активную ячейку
+            document.querySelector('.name-cell.active')?.classList.remove('active');
+            event.currentTarget.classList.add('active');
+            
+            const characterId = event.currentTarget.getAttribute('data-character-id');
+            
+            console.log("Current data-character-id:", characterId);
+            
+            const selectedCharacter = characters.find(char => char.id == characterId);
+
+            if (!selectedCharacter) {
+                console.error("Character with ID", characterId, "not found");
+                return;
+            }
+
+            document.getElementById('nameInput2').value = selectedCharacter.name;
+            document.getElementById('hpInput2').value = selectedCharacter.hp;
+            document.getElementById('mpInput2').value = selectedCharacter.mp;
+            document.getElementById('armorInput2').value = selectedCharacter.helmet;
+            document.getElementById('damageInput2').value = selectedCharacter.weapon_1;
+            document.getElementById('multiplayerInput2').value = selectedCharacter.multiplayer;
+
+            const addNameModal = document.getElementById('addNameModal');
+            addNameModal.style.display = 'block';
+
+            console.log("Selected character:", selectedCharacter);
+        }
+        function updateCharacterNames(characterId, updatedValues) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+
+            if (selectedCharacter) {
+                // Преобразуем все переданные значения в числа, кроме имени
+                const numericValues = {};
+
+                for (const fieldName in updatedValues) {
+                    if (fieldName !== 'name') {
+                        const numericValue = parseInt(updatedValues[fieldName], 10);
+                        
+                        if (!isNaN(numericValue)) {
+                            numericValues[fieldName] = numericValue;
+                        } else {
+                            console.error(`Invalid value for ${fieldName}: ${updatedValues[fieldName]}`);
+                        }
+                    }
+                }
+
+                // Обновляем все переданные числовые значения и имя у выбранного персонажа
+                for (const fieldName in numericValues) {
+                    if (selectedCharacter.hasOwnProperty(fieldName)) {
+                        selectedCharacter[fieldName] = numericValues[fieldName];
+                    } else {
+                        console.error(`Property ${fieldName} not found in selectedCharacter`);
+                    }
+                }
+
+                selectedCharacter.name = updatedValues.name;  // Обновление имени
+
+                // Закрываем модальное окно
+                closeNameModal();
+                displayCharacterList();
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+        function closeNameModal() {
+            const addNameModal = document.getElementById('addNameModal');
+            addNameModal.style.display = 'none';
+        }
+
+
+        // ... (ваш предыдущий код)
+
+
+        // Добавляем обработчик для кнопки "Отмена"
+        document.getElementById('cancelcharacterbtn').addEventListener('click', function() {
+            closeNameModal(); // закрыть модальное окно
+        });
+
+        // ... (ваш следующий код)
+
+        function deleteCharacter(characterId) {
+            const index = characters.findIndex(char => char.id == characterId);
+            
+            if (index !== -1) {
+                characters.splice(index, 1);
+                console.log(`Character with ID ${characterId} deleted.`);
+                displayCharacterList();  // Обновляем отображение списка персонажей
+            } else {
+                console.error(`Character with ID ${characterId} not found.`);
+            }
+        }
+
+
+
+
+
+
+        document.getElementById('deleteharacterbtn').addEventListener('click', function() {
+            const characterId = document.querySelector('.name-cell.active')?.getAttribute('data-character-id');
+            
+            if (characterId) {
+                deleteCharacter(characterId);
+                closeNameModal();  // Закрыть модальное окно после удаления
+            } else {
+                console.error('Персонаж не выбран.');
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function saveCharacterToFile() {
+            const characterId = document.querySelector('.name-cell.active')?.getAttribute('data-character-id');
+            
+            if (characterId) {
+                const selectedCharacter = characters.find(char => char.id == characterId);
+                
+                if (selectedCharacter) {
+                    const jsCode = `var savedCharacter = ${JSON.stringify(selectedCharacter)};`;
+
+                    const blob = new Blob([jsCode], { type: 'text/javascript' });
+                    const url = URL.createObjectURL(blob);
+
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'savedCharacter.js';
+                    document.body.appendChild(a);
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    closeNameModal();  // Закрыть модальное окно после сохранения
+                } else {
+                    console.error('Выбранный персонаж не найден.');
+                }
+            } else {
+                console.error('Персонаж не выбран.');
+            }
+        }
+
+        // Добавляем обработчик для кнопки "Сохранить персонажа"
+        document.getElementById('savecharacterbtn').addEventListener('click', function() {
+            saveCharacterToFile();
+        });
+
+
+
+
+        function loadCharactersgroupJS() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.js'; // Позволяем выбирать только JS файлы
+
+            input.onchange = event => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = event => {
+                    const content = event.target.result;
+                    console.log('Содержимое файла:', content); // Добавим для дебаггинга
+                    try {
+                        eval(content); // Выполняем содержимое файла
+                        
+                        if (Array.isArray(savedCharacters) && savedCharacters.length > 0) {
+                            // Присваиваем новые ID персонажам
+                            savedCharacters.forEach((character, index) => {
+                                character.id = characters.length + 1 + index;
+                            });
+
+                            // Добавляем персонажей в конец массива characters
+                            characters = characters.concat(savedCharacters);
+
+                            displayCharacterList(); // Обновляем список персонажей после загрузки
+                        } else {
+                            console.error('Персонажи не найдены в загруженном файле.');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка выполнения кода из файла:', error); // Добавим для дебаггинга
+                    }
+                };
+
+                reader.onerror = error => {
+                    console.error('Ошибка чтения файла:', error); // Добавим для дебаггинга
+                };
+
+                if (file) {
+                    reader.readAsText(file); // Читаем файл как текст
+                } else {
+                    console.error('Файл не выбран'); // Добавим для дебаггинга
+                }
+                closeModal(); 
+            };
+
+            input.click();
+        }
+
+        // Привязываем функцию к кнопке "Загрузить персонажей"
+        document.getElementById('loadcharactersBtn').addEventListener('click', function() {
+            loadCharactersgroupJS();
+        });
+
+
+
+
+
+
+        document.getElementById('changecharacterbtn').addEventListener('click', function() {
+            const activeCell = document.querySelector('.name-cell.active');
+            
+            if (activeCell) {
+                const characterId = activeCell.getAttribute('data-character-id');
+                const nameValue = document.getElementById('nameInput2').value.trim(); // Убедитесь, что имя является строкой
+
+                // Проверка на пустое имя
+                if (!nameValue) {
+                    console.error("Name cannot be empty");
+                    return;
+                }
+
+                const armorValue = parseInt(document.getElementById('armorInput2').value, 10);
+                const damageValue = parseInt(document.getElementById('damageInput2').value, 10);
+                const multiplayerValue = parseInt(document.getElementById('multiplayerInput2').value, 10);
+                const hpvalue = parseInt(document.getElementById('hpInput2').value, 10);
+                const mpvalue = parseInt(document.getElementById('mpInput2').value, 10);
+
+                const updatedValues = {
+                    name: nameValue,
+                    hp: hpvalue,
+                    max_hp: hpvalue,  
+                    mp: mpvalue,
+                    max_mp: mpvalue,
+                    helmet: armorValue,
+                    amulet: armorValue,
+                    ring: armorValue,
+                    earring: armorValue,
+                    leftArmor: armorValue,
+                    leftShoulders: armorValue,
+                    leftBracelets: armorValue,
+                    leftGloves: armorValue,
+                    leftPants: armorValue,
+                    leftBoots: armorValue,
+                    cloak: armorValue,
+                    belt: armorValue,
+                    secondRing: armorValue,
+                    secondEarring: armorValue,
+                    rightArmor: armorValue,
+                    rightShoulders: armorValue,
+                    rightBracelets: armorValue,
+                    rightGloves: armorValue,
+                    rightPants: armorValue,
+                    rightBoots: armorValue,
+                    weapon_1: damageValue,
+                    weapon_2: damageValue,
+                    weapon_3: damageValue,
+                    weapon_4: damageValue,
+                    weapon_5: damageValue,
+                    weapon_6: damageValue,
+                    weapon_7: damageValue,
+                    weapon_8: damageValue,
+                    weapon_9: damageValue,
+                    weapon_10: damageValue,
+                    multiplayer: multiplayerValue,
+                };
+
+                updateCharacterNames(characterId, updatedValues);
+            } else {
+                console.error("No active character selected");
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Функция для кнопки "Применить"
+        document.getElementById('changehpValue').addEventListener('click', function() {
+            applyHPChanges();
+        });
+
+        // Функция для кнопки "Отмена"
+        document.getElementById('canclehp_Value').addEventListener('click', function() {
+            closeHPModal();
+        });
+
+
+
+
+        function setSelectedCharacterName(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            
+            if (selectedCharacter) {
+                const nameLabel = document.getElementById('selectedCharacterName');
+                nameLabel.textContent = selectedCharacter.name;
+                nameLabel.style.fontSize = '25px';
+                nameLabel.style.fontWeight = 'bold';
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+        // Отслеживаем клик по ячейке "HP"
+        const hpCells = document.querySelectorAll('.HP-cell');
+
+        hpCells.forEach(cell => {
+            cell.addEventListener('click', openHPModal);
+        });
+
+        const hpInputFields = document.querySelectorAll('.HP-input');
+
+        hpInputFields.forEach(input => {
+            input.addEventListener('input', applyHPChanges); // Обработчик input для каждого поля ввода
+        });
+
+        // Добавляем обработчик событий для модального окна
+        document.getElementById('addHPModal').addEventListener('keydown', function(event) {
+            // Проверяем, является ли нажатая клавиша клавишей Enter
+            if (event.key === 'Enter') {
+                applyHPChanges();
+            }
+        });
+
+
+
+        let activeCharacterIds = []; // Массив для хранения ID активных персонажей
+
+        function openHPModal(event) {
+            closeAllModals();
+            // Устанавливаем активную ячейку "HP"
+            document.querySelectorAll('.hp-cell').forEach(cell => {
+                cell.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Получаем ID персонажа из data атрибута активной ячейки
+            const characterId = parseInt(event.currentTarget.getAttribute('data-character-id'), 10);
+            
+            console.log("Current data-character-id:", characterId);
+            
+            // Добавляем ID персонажа в массив активных персонажей
+            activeCharacterIds.push(characterId);
+            
+            // Устанавливаем имя персонажа в LABEL
+            setSelectedCharacterName(characterId);
+            
+            // Сброс значений полей модального окна
+            resetHPModalFields();
+            
+            // Открываем модальное окно
+            const addHPModal = document.getElementById('addHPModal');
+            addHPModal.style.display = 'block';
+        }
+
+
+        function applyHPChanges() {
+            activeCharacterIds.forEach(characterId => {
+                console.log("Applying changes for character ID:", characterId);
+                
+                const healValue = parseInt(document.getElementById('healValue').value, 10) || 0;
+                const damageValue = parseInt(document.getElementById('damageValue').value, 10) || 0;
+                const maxHpValue = parseInt(document.getElementById('max_hpValue').value, 10) || 0;
+
+                const selectedCharacter = characters.find(char => char.id == characterId);
+                console.log("Selected Character:", selectedCharacter);
+                
+                if (selectedCharacter) {
+                    let prevHp = selectedCharacter.hp; // HP до урона
+
+                    // Восстановление HP
+                    if (healValue) {
+                        selectedCharacter.hp += healValue;
+                        
+                        if (selectedCharacter.hp > selectedCharacter.max_hp) {
+                            selectedCharacter.hp = selectedCharacter.max_hp;
+                        }
+                    } 
+                    // Урон HP
+                    else if (damageValue) {
+                        if (selectedCharacter.max_hp === 0) {
+                            selectedCharacter.hp -= damageValue;
+                        } else {
+                            selectedCharacter.hp -= damageValue;
+                            
+                            if (selectedCharacter.hp < 0) {
+                                selectedCharacter.hp = 0;
+                            }
+                        }
+                    }
+
+                    // Обновляем max_HP
+                    if (maxHpValue) {
+                        selectedCharacter.hp = selectedCharacter.hp + maxHpValue;
+                        selectedCharacter.max_hp = selectedCharacter.max_hp + maxHpValue;
+                    }
+
+                    updateFightDisplay2(prevHp, damageValue, selectedCharacter.hp);
+                    updateArmorCellDisplayHP(characterId);
+                    resetHPModalFields();
+                    updateHPBarWidth(characterId);                    
+                    closeHPModal();
+                } else {
+                    console.error("Character with ID", characterId, "not found");
+                }
+            });
+
+            activeCharacterIds = [];
+        }
+
+        function updateFightDisplay2(prevHp, damageValue, hp) {
+            const totalDamage = prevHp - hp;
+            const fightDisplay = `
+                HP: ${prevHp} - ${damageValue} = ${hp} <br>
+            `;
+
+            const fightDisplayElement = document.getElementById('fightdisply');
+            if (fightDisplayElement) {
+                fightDisplayElement.innerHTML = fightDisplay;
+                fightDisplayElement.style.textAlign = 'left';    
+                fightDisplayElement.style.fontSize = '18px';     
+                fightDisplayElement.style.marginLeft = '10px';   
+            } else {
+                console.error("Fight display element not found");
+            }
+        }
+
+
+        function updateArmorCellDisplayHP(characterId) {
+            const cell = document.querySelector(`.hp-cell[data-character-id="${characterId}"]`);
+
+            if (cell) {
+                const selectedCharacter = characters.find(char => char.id == characterId);
+
+                if (selectedCharacter) {
+                    const hpText = `${selectedCharacter.hp} <br> ${selectedCharacter.max_hp}`;
+                    cell.innerHTML = `<span class="hp-text" data-top-text="${selectedCharacter.hp}" data-bottom-text="${selectedCharacter.max_hp}"></span>`;
+                } else {
+                    console.error("Character with ID", characterId, "not found");
+                }
+            } else {
+                console.error("HP cell not found for character ID", characterId);
+            }
+        }
+
+
+
+    
+
+        function resetHPModalFields() {
+            document.getElementById('healValue').value = '';
+            document.getElementById('damageValue').value = '';
+            document.getElementById('max_hpValue').value = '';
+        }
+
+        function closeHPModal() {
+            const addHPModal = document.getElementById('addHPModal');
+            addHPModal.style.display = 'none';
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Функция для кнопки "Применить"
+        document.getElementById('changempValue').addEventListener('click', function() {
+            applyMPChanges();
+        });
+
+        // Функция для кнопки "Отмена"
+        document.getElementById('canclemp_Value').addEventListener('click', function() {
+            closeMPModal();
+        });
+
+
+
+
+
+
+
+
+
+
+
+        function setSelectedCharacterNameMP(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            
+            if (selectedCharacter) {
+                const nameLabel = document.getElementById('selectedCharacterNameMP');
+                nameLabel.textContent = selectedCharacter.name;
+                nameLabel.style.fontSize = '50px';
+                nameLabel.style.fontWeight = 'bold';
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+        // Отслеживаем клик по ячейке "HP"
+        const mpCells = document.querySelectorAll('.mp-cell');
+
+        mpCells.forEach(cell => {
+            cell.addEventListener('click', openMPModal);
+        });
+
+        const MpInputFields = document.querySelectorAll('.mp-input');
+
+        function handleEnterKeyMP(event) {
+            if (event.key === 'Enter') {
+                applyMPChanges();
+            }
+        }
+
+
+
+
+
+
+        document.getElementById('addMPModal').addEventListener('keydown', function(event) {
+
+            // Проверяем, является ли нажатая клавиша клавишей Enter
+            if (event.key === 'Enter') {
+                applyMPChanges();
+            }
+        });
+
+
+        MpInputFields.forEach(input => {
+            input.addEventListener('keydown', handleEnterKeyMP);
+        });
+
+
+
+        function openMPModal(event) {
+            closeAllModals();
+            // Устанавливаем активную ячейку "MP"
+            document.querySelectorAll('.mp-cell').forEach(cell => {
+                cell.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Получаем ID персонажа из data атрибута активной ячейки
+            const characterId = parseInt(event.currentTarget.getAttribute('data-character-id'), 10);
+            
+
+            // Устанавливаем имя персонажа в LABEL
+            setSelectedCharacterNameMP(characterId);
+            
+            // Сброс значений полей модального окна
+            resetMPModalFields();
+            
+            // Открываем модальное окно
+            const addMPModal = document.getElementById('addMPModal');
+            addMPModal.style.display = 'block';
+        }
+
+
+
+
+
+        function applyMPChanges() {
+            const characterId = document.querySelector('.mp-cell.active').getAttribute('data-character-id');
+
+            const healMPValue = parseInt(document.getElementById('healMPValue').value, 10) || 0;
+            let damageMPValue = parseInt(document.getElementById('damageMPValue').value, 10) || 0;  // Объявляем как let
+            const maxmpValue = parseInt(document.getElementById('maxmpValue').value, 10) || 0; // Получаем значение maxmpValue
+
+            const selectedCharacter = characters.find(char => char.id == characterId);
+
+            if (selectedCharacter) {
+                // Восстановление MP
+                if (healMPValue) {
+                    selectedCharacter.mp += healMPValue;
+
+                    // Проверяем, не превышает ли MP max_MP
+                    if (selectedCharacter.mp > selectedCharacter.max_mp) {
+                        selectedCharacter.mp = selectedCharacter.max_mp;
+                    }
+                } 
+                
+                // Расход MP
+                else if (damageMPValue) {
+                    selectedCharacter.mp -= damageMPValue;
+                }
+
+
+
+                // Обновляем max_MP
+                if (maxmpValue) {
+                    selectedCharacter.max_mp += maxmpValue;
+                    selectedCharacter.mp += maxmpValue;
+                }
+
+                // Обновляем ячейку с MP
+                updateArmorCellDisplayMP(characterId);
+                
+                // Обновляем полосу MP
+                updateMPBarWidth(characterId);  
+                
+                // Закрываем модальное окно
+                closeMPModal();
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+        function updateArmorCellDisplayMP(characterId) {
+            const cell = document.querySelector(`.mp-cell[data-character-id="${characterId}"]`);
+            
+            if (cell) {
+                const selectedCharacter = characters.find(char => char.id == characterId);
+                
+                if (selectedCharacter) {
+                    const mpText = `${selectedCharacter.mp} <br> ${selectedCharacter.max_mp}`;
+                    cell.innerHTML = `<span class="mp-text" data-top-text="${selectedCharacter.mp}" data-bottom-text="${selectedCharacter.max_mp}"></span>`;
+                } else {
+                    console.error("Character with ID", characterId, "not found");
+                }
+            } else {
+                console.error("MP cell not found for character ID", characterId);
+            }
+        }
+
+
+        function resetMPModalFields() {
+            document.getElementById('healMPValue').value = '';
+            document.getElementById('damageMPValue').value = '';
+            document.getElementById('maxmpValue').value = '';
+        }
+
+        function closeMPModal() {
+            const addMPModal = document.getElementById('addMPModal');
+            addMPModal.style.display = 'none';
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function setSelectedCharacterNamedamagehp2(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            
+            if (selectedCharacter) {
+                const nameLabel = document.getElementById('SelectedCharacterNamedamagehp');
+                nameLabel.textContent = selectedCharacter.name;
+                nameLabel.style.fontSize = '25px';
+                nameLabel.style.fontWeight = 'bold';
+
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+
+
+        // Обработчик для закрытия модального окна addDamageHpModal
+        document.getElementById('closeDamageHpModalBtn').addEventListener('click', function() {
+            const adddamagehpModal = document.getElementById('adddamagehpModal');
+            adddamagehpModal.style.display = 'none';
+        });
+
+
+
+
+        // Функция для кнопки "Применить"
+        document.getElementById('changedamagehpValue').addEventListener('click', function() {
+            applydamagehpChanges();
+        });
+
+
+        function resetdamagehpFields() {
+            // Сброс всех полей в модальном окне
+            document.getElementById('helmetValuehp').value = '';
+            document.getElementById('amuletValuehp').value = '';
+            document.getElementById('ringValuehp').value = '';
+            document.getElementById('earringValuehp').value = '';
+            document.getElementById('leftArmorValuehp').value = '';
+            document.getElementById('leftShouldersValuehp').value = '';
+            document.getElementById('leftBraceletsValuehp').value = '';
+            document.getElementById('leftGlovesValuehp').value = '';
+            document.getElementById('leftPantsValuehp').value = '';
+            document.getElementById('leftBootsValuehp').value = '';
+            document.getElementById('cloakValuehp').value = '';
+            document.getElementById('beltValuehp').value = '';
+            document.getElementById('secondRingValuehp').value = '';
+            document.getElementById('secondEarringValuehp').value = '';
+            document.getElementById('rightArmorValuehp').value = '';
+            document.getElementById('rightShouldersValuehp').value = '';
+            document.getElementById('rightBraceletsValuehp').value = '';
+            document.getElementById('rightGlovesValuehp').value = '';
+            document.getElementById('rightPantsValuehp').value = '';
+            document.getElementById('rightBootsValuehp').value = '';
+
+            document.getElementById('helmetcrit').value = '2';
+            document.getElementById('amuletcrit').value = '2';
+            document.getElementById('ringcrit').value = '1';
+            document.getElementById('earringcrit').value = '1';
+            document.getElementById('leftArmorcrit').value = '1';
+            document.getElementById('leftShoulderscrit').value = '1';
+            document.getElementById('leftBraceletscrit').value = '1';
+            document.getElementById('leftGlovescrit').value = '1';
+            document.getElementById('leftPantscrit').value = '1';
+            document.getElementById('leftBootscrit').value = '1';
+            document.getElementById('cloakcrit').value = '1';
+            document.getElementById('beltcrit').value = '1';
+            document.getElementById('secondRingcrit').value = '1';
+            document.getElementById('secondEarringcrit').value = '1';
+            document.getElementById('rightArmorcrit').value = '1';
+            document.getElementById('rightShoulderscrit').value = '1';
+            document.getElementById('rightBraceletscrit').value = '1';
+            document.getElementById('rightGlovescrit').value = '1';
+            document.getElementById('rightPantscrit').value = '1';
+            document.getElementById('rightBootscrit').value = '1';
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Добавляем слушатель для кнопки "Броня"
+        document.getElementById('armorbutton').addEventListener('click', opendamagehpModal);
+
+
+
+        function handleEnterKeydamagehp(event) {
+            if (event.key === 'Enter') {
+                applydamagehpChanges();
+                applyArmorChanges(); 
+            }
+        }
+
+        // Добавляем обработчик событий для модального окна
+        document.getElementById('adddamagehpModal').addEventListener('keydown', function(event) {
+            // Проверяем, является ли нажатая клавиша клавишей Enter
+            if (event.key === 'Enter') {
+                applydamagehpChanges();
+                applyArmorChanges();               
+            }
+        });
+
+
+
+          // Добавляем обработчик событий для кнопки "Применить"
+        document.getElementById('changedamagehpValue').addEventListener('click', function() {
+            applyArmorChanges();
+        });
+
+
+
+
+
+
+        function opendamagehpModal() {
+            closeAllModals();
+
+            // Очищаем allarmorValue
+            const allArmorValueInput = document.getElementById('allarmorValue');
+            allArmorValueInput.value = '';
+            allArmorValueInput.placeholder = '0';
+
+            // Удаляем класс .active у предыдущей активной ячейки, если она существует
+            if (currentCell) {
+                currentCell.classList.remove('active');
+            }
+
+            // Находим ячейку с текущим ID персонажа и добавляем ей класс .active
+            // Здесь мы просто добавляем класс .active к ячейке с ID персонажа
+            const cell = document.querySelector(`[data-character-id="${currentCharacterId}"]`);
+            if (cell) {
+                cell.classList.add('active');
+            }
+
+            // Получаем объект персонажа по currentCharacterId
+            const selectedCharacter = characters.find(char => char.id == currentCharacterId);
+
+            let allArmorValue = selectedCharacter ? selectedCharacter.allarmor || 0 : 0; 
+
+            const armorInputIds = [
+                'helmetValue', 'amuletValue', 'ringValue', 'earringValue', 
+                'leftArmorValue', 'leftShouldersValue', 'leftBraceletsValue', 'leftGlovesValue',
+                'leftPantsValue', 'leftBootsValue', 'cloakValue', 'beltValue',
+                'secondRingValue', 'secondEarringValue', 
+                'rightArmorValue', 'rightShouldersValue', 'rightBraceletsValue', 'rightGlovesValue',
+                'rightPantsValue', 'rightBootsValue'
+            ];
+
+            armorInputIds.forEach(field => {
+                const inputElement = document.getElementById(field);
+                const fieldName = field.replace('Value', '');
+
+                // Получаем значение из объекта персонажа и устанавливаем в placeholder
+                let fieldValue = selectedCharacter && selectedCharacter[fieldName] !== undefined ? selectedCharacter[fieldName] : 0;
+
+                inputElement.placeholder = fieldValue.toString();
+                inputElement.value = '';  // Очищаем значение
+            });
+
+            const adddamagehpModal = document.getElementById('adddamagehpModal');
+            adddamagehpModal.style.display = 'block';
+        }
+
+
+
+
+
+
+
+        function applyArmorChanges() {
+            console.log("applyArmorChanges function called");
+
+            const updatedValues = {};
+
+            // Массив всех полей
+            const armorInputIds = [
+                'helmetValue', 'amuletValue', 'ringValue', 'earringValue', 
+                'leftArmorValue', 'leftShouldersValue', 'leftBraceletsValue', 'leftGlovesValue',
+                'leftPantsValue', 'leftBootsValue', 'cloakValue', 'beltValue',
+                'secondRingValue', 'secondEarringValue', 
+                'rightArmorValue', 'rightShouldersValue', 'rightBraceletsValue', 'rightGlovesValue',
+                'rightPantsValue', 'rightBootsValue', 'allarmorValue'
+            ];
+
+            armorInputIds.forEach(field => {
+                const fieldName = field.replace('Value', '');
+                const inputElement = document.getElementById(field);
+                
+                // Проверяем, изменилось ли значение в поле
+                if (inputElement.value !== '' && inputElement.value !== inputElement.placeholder) {
+                    updatedValues[fieldName] = inputElement.value;
+                }
+            });
+
+            // Обновляем значения персонажа
+            updateCharacterValues(currentCharacterId, updatedValues);
+            closedamagehpModal();
+        }
+
+
+
+
+
+        function getValueIfNotEmpty(elementId) {
+            const value = document.getElementById(elementId).value;
+            return value !== '' ? parseInt(value, 10) : 0;
+        }
+
+        function updateCharacterValues(characterId, updatedValues) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+
+            if (selectedCharacter) {
+                const numericValues = {};
+
+                for (const fieldName in updatedValues) {
+                    const numericValue = parseInt(updatedValues[fieldName], 10);
+                    
+                    if (!isNaN(numericValue)) {
+                        numericValues[fieldName] = numericValue;
+                    } else {
+                        console.error(`Invalid value for ${fieldName}: ${updatedValues[fieldName]}`);
+                    }
+                }
+
+                for (const fieldName in numericValues) {
+                    if (selectedCharacter.hasOwnProperty(fieldName)) {
+                        selectedCharacter[fieldName] = numericValues[fieldName];
+                    } else {
+                        console.error(`Property ${fieldName} not found in selectedCharacter`);
+                    }
+                }
+
+        
+
+                const damageInputIds = [
+                    'helmetValue', 'amuletValue', 'ringValue', 'earringValue',
+                    'leftArmorValue', 'leftShouldersValue', 'leftBraceletsValue', 'leftGlovesValue',
+                    'leftPantsValue', 'leftBootsValue', 'cloakValue', 'beltValue',
+                    'secondRingValue', 'secondEarringValue', 'rightArmorValue', 'rightShouldersValue',
+                    'rightBraceletsValue', 'rightGlovesValue', 'rightPantsValue', 'rightBootsValue'
+                ];
+
+                damageInputIds.forEach(field => {
+                    const inputElement = document.getElementById(field);
+                    const fieldNameWithoutValue = field.replace('Value', '');
+                    inputElement.placeholder = selectedCharacter[fieldNameWithoutValue].toString();
+                    inputElement.value = '';
+                });
+
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+
+
+
+        function applydamagehpChanges() {
+
+            // Получение значения из поля ввода
+            const helmetValue = document.getElementById('helmetValuehp').value || '0';
+            const amuletValue = document.getElementById('amuletValuehp').value || '0';
+            const ringValue = document.getElementById('ringValuehp').value || '0';
+            const earringValue = document.getElementById('earringValuehp').value || '0';
+            const leftArmorValue = document.getElementById('leftArmorValuehp').value || '0';
+
+            const leftShouldersValue = document.getElementById('leftShouldersValuehp').value || '0';
+            const leftBraceletsValue = document.getElementById('leftBraceletsValuehp').value || '0';
+            const leftGlovesValue = document.getElementById('leftGlovesValuehp').value || '0';
+            const leftPantsValue = document.getElementById('leftPantsValuehp').value || '0';
+            const leftBootsValue = document.getElementById('leftBootsValuehp').value || '0';
+
+            const cloakValue = document.getElementById('cloakValuehp').value || '0';
+            const beltValue = document.getElementById('beltValuehp').value || '0';
+            const secondRingValue = document.getElementById('secondRingValuehp').value || '0';
+            const secondEarringValue = document.getElementById('secondEarringValuehp').value || '0';
+            const rightArmorValue = document.getElementById('rightArmorValuehp').value || '0';
+
+            const rightShouldersValue = document.getElementById('rightShouldersValuehp').value || '0';
+            const rightBraceletsValue = document.getElementById('rightBraceletsValuehp').value || '0';
+            const rightGlovesValue = document.getElementById('rightGlovesValuehp').value || '0';
+            const rightPantsValue = document.getElementById('rightPantsValuehp').value || '0';
+            const rightBootsValue = document.getElementById('rightBootsValuehp').value || '0';
+
+
+            const helmetcrit = document.getElementById('helmetcrit').value.trim() || '2';
+            const amuletcrit = document.getElementById('amuletcrit').value.trim() || '2';
+            const ringcrit = document.getElementById('ringcrit').value.trim() || '1';
+            const earringcrit = document.getElementById('earringcrit').value.trim() || '1';
+            const leftArmorcrit = document.getElementById('leftArmorcrit').value.trim() || '1';
+
+            const leftShoulderscrit = document.getElementById('leftShoulderscrit').value.trim() || '1';
+            const leftBraceletscrit = document.getElementById('leftBraceletscrit').value.trim() || '1';
+            const leftGlovescrit = document.getElementById('leftGlovescrit').value.trim() || '1';
+            const leftPantscrit = document.getElementById('leftPantscrit').value.trim() || '1';
+            const leftBootscrit = document.getElementById('leftBootscrit').value.trim() || '1';
+
+            const cloakcrit = document.getElementById('cloakcrit').value.trim() || '1';
+            const beltcrit = document.getElementById('beltcrit').value.trim() || '1';
+            const secondRingcrit = document.getElementById('secondRingcrit').value.trim() || '1';
+            const secondEarringcrit = document.getElementById('secondEarringcrit').value.trim() || '1';
+            const rightArmorcrit = document.getElementById('rightArmorcrit').value.trim() || '1';
+
+            const rightShoulderscrit = document.getElementById('rightShoulderscrit').value.trim() || '1';
+            const rightBraceletscrit = document.getElementById('rightBraceletscrit').value.trim() || '1';
+            const rightGlovescrit = document.getElementById('rightGlovescrit').value.trim() || '1';
+            const rightPantscrit = document.getElementById('rightPantscrit').value.trim() || '1';
+            const rightBootscrit = document.getElementById('rightBootscrit').value.trim() || '1';
+
+
+
+
+            const selectedCharacter = characters.find(char => char.id == currentCharacterId);
+            console.log("Selected Character:", selectedCharacter);
+
+            if (selectedCharacter) {
+                // Функция для вычисления урона по конкретному элементу брони
+                function calculateDamage(damage, defense) {
+                    return damage > defense ? damage - defense : 0;
+                }
+
+                let totalDamage = 0;
+
+                if (helmetValue) {
+                    const helmetDamageValue = parseInt(helmetValue, 10) * parseInt(helmetcrit, 10); 
+                    const helmetDefense = selectedCharacter.helmet || 0;
+                    const helmetDamageApplied = calculateDamage(helmetDamageValue, helmetDefense);
+                    totalDamage += helmetDamageApplied;
+                }
+
+                if (amuletValue) {
+                    const amuletDamageValue = parseInt(amuletValue, 10) * parseInt(amuletcrit, 10); 
+                    const amuletDefense = selectedCharacter.amulet || 0;
+                    const amuletDamageApplied = calculateDamage(amuletDamageValue, amuletDefense);
+                    totalDamage += amuletDamageApplied;
+                }
+
+                if (ringValue) {
+                    const ringDamageValue = parseInt(ringValue, 10) * parseInt(ringcrit, 10); 
+                    const ringDefense = selectedCharacter.ring || 0;
+                    const ringDamageApplied = calculateDamage(ringDamageValue, ringDefense);
+                    totalDamage += ringDamageApplied;
+                }
+
+                if (earringValue) {
+                    const earringDamageValue = parseInt(earringValue, 10) * parseInt(earringcrit, 10); 
+                    const earringDefense = selectedCharacter.earring || 0;
+                    const earringDamageApplied = calculateDamage(earringDamageValue, earringDefense);
+                    totalDamage += earringDamageApplied;
+                }
+
+                if (leftArmorValue) {
+                    const leftArmorDamageValue = parseInt(leftArmorValue, 10) * parseInt(leftArmorcrit, 10); 
+                    const leftArmorDefense = selectedCharacter.leftArmor || 0;
+                    const leftArmorDamageApplied = calculateDamage(leftArmorDamageValue, leftArmorDefense);
+                    totalDamage += leftArmorDamageApplied;
+                }
+
+                if (leftShouldersValue) {
+                    const leftShouldersDamageValue = parseInt(leftShouldersValue, 10) * parseInt(leftShoulderscrit, 10); 
+                    const leftShouldersDefense = selectedCharacter.leftShoulders || 0;
+                    const leftShouldersDamageApplied = calculateDamage(leftShouldersDamageValue, leftShouldersDefense);
+                    totalDamage += leftShouldersDamageApplied;
+                }
+
+                if (leftBraceletsValue) {
+                    const leftBraceletsDamageValue = parseInt(leftBraceletsValue, 10) * parseInt(leftBraceletscrit, 10); 
+                    const leftBraceletsDefense = selectedCharacter.leftBracelets || 0;
+                    const leftBraceletsDamageApplied = calculateDamage(leftBraceletsDamageValue, leftBraceletsDefense);
+                    totalDamage += leftBraceletsDamageApplied;
+                }
+
+                if (leftGlovesValue) {
+                    const leftGlovesDamageValue = parseInt(leftGlovesValue, 10) * parseInt(leftGlovescrit, 10); 
+                    const leftGlovesDefense = selectedCharacter.leftGloves || 0;
+                    const leftGlovesDamageApplied = calculateDamage(leftGlovesDamageValue, leftGlovesDefense);
+                    totalDamage += leftGlovesDamageApplied;
+                }
+
+                if (leftPantsValue) {
+                    const leftPantsDamageValue = parseInt(leftPantsValue, 10) * parseInt(leftPantscrit, 10); 
+                    const leftPantsDefense = selectedCharacter.leftPants || 0;
+                    const leftPantsDamageApplied = calculateDamage(leftPantsDamageValue, leftPantsDefense);
+                    totalDamage += leftPantsDamageApplied;
+                }
+
+                if (leftBootsValue) {
+                    const leftBootsDamageValue = parseInt(leftBootsValue, 10) * parseInt(leftBootscrit, 10); 
+                    const leftBootsDefense = selectedCharacter.leftBoots || 0;
+                    const leftBootsDamageApplied = calculateDamage(leftBootsDamageValue, leftBootsDefense);
+                    totalDamage += leftBootsDamageApplied;
+                }
+
+                if (cloakValue) {
+                    const cloakDamageValue = parseInt(cloakValue, 10) * parseInt(cloakcrit, 10); 
+                    const cloakDefense = selectedCharacter.cloak || 0;
+                    const cloakDamageApplied = calculateDamage(cloakDamageValue, cloakDefense);
+                    totalDamage += cloakDamageApplied;
+                }
+
+                if (beltValue) {
+                    const beltDamageValue = parseInt(beltValue, 10) * parseInt(beltcrit, 10); 
+                    const beltDefense = selectedCharacter.belt || 0;
+                    const beltDamageApplied = calculateDamage(beltDamageValue, beltDefense);
+                    totalDamage += beltDamageApplied;
+                }
+
+                if (secondRingValue) {
+                    const secondRingDamageValue = parseInt(secondRingValue, 10) * parseInt(secondRingcrit, 10); 
+                    const secondRingDefense = selectedCharacter.secondRing || 0;
+                    const secondRingDamageApplied = calculateDamage(secondRingDamageValue, secondRingDefense);
+                    totalDamage += secondRingDamageApplied;
+                }
+
+                if (secondEarringValue) {
+                    const secondEarringDamageValue = parseInt(secondEarringValue, 10) * parseInt(secondEarringcrit, 10); 
+                    const secondEarringDefense = selectedCharacter.secondEarring || 0;
+                    const secondEarringDamageApplied = calculateDamage(secondEarringDamageValue, secondEarringDefense);
+                    totalDamage += secondEarringDamageApplied;
+                }
+
+                if (rightArmorValue) {
+                    const rightArmorDamageValue = parseInt(rightArmorValue, 10) * parseInt(rightArmorcrit, 10); 
+                    const rightArmorDefense = selectedCharacter.rightArmor || 0;
+                    const rightArmorDamageApplied = calculateDamage(rightArmorDamageValue, rightArmorDefense);
+                    totalDamage += rightArmorDamageApplied;
+                }
+
+                if (rightShouldersValue) {
+                    const rightShouldersDamageValue = parseInt(rightShouldersValue, 10) * parseInt(rightShoulderscrit, 10); 
+                    const rightShouldersDefense = selectedCharacter.rightShoulders || 0;
+                    const rightShouldersDamageApplied = calculateDamage(rightShouldersDamageValue, rightShouldersDefense);
+                    totalDamage += rightShouldersDamageApplied;
+                }
+
+                if (rightBraceletsValue) {
+                    const rightBraceletsDamageValue = parseInt(rightBraceletsValue, 10) * parseInt(rightBraceletscrit, 10); 
+                    const rightBraceletsDefense = selectedCharacter.rightBracelets || 0;
+                    const rightBraceletsDamageApplied = calculateDamage(rightBraceletsDamageValue, rightBraceletsDefense);
+                    totalDamage += rightBraceletsDamageApplied;
+                }
+
+                if (rightGlovesValue) {
+                    const rightGlovesDamageValue = parseInt(rightGlovesValue, 10) * parseInt(rightGlovescrit, 10); 
+                    const rightGlovesDefense = selectedCharacter.rightGloves || 0;
+                    const rightGlovesDamageApplied = calculateDamage(rightGlovesDamageValue, rightGlovesDefense);
+                    totalDamage += rightGlovesDamageApplied;
+                }
+
+                if (rightPantsValue) {
+                    const rightPantsDamageValue = parseInt(rightPantsValue, 10) * parseInt(rightPantscrit, 10); 
+                    const rightPantsDefense = selectedCharacter.rightPants || 0;
+                    const rightPantsDamageApplied = calculateDamage(rightPantsDamageValue, rightPantsDefense);
+                    totalDamage += rightPantsDamageApplied;
+                }
+
+                if (rightBootsValue) {
+                    const rightBootsDamageValue = parseInt(rightBootsValue, 10) * parseInt(rightBootscrit, 10); 
+                    const rightBootsDefense = selectedCharacter.rightBoots || 0;
+                    const rightBootsDamageApplied = calculateDamage(rightBootsDamageValue, rightBootsDefense);
+                    totalDamage += rightBootsDamageApplied;
+                }
+
+                // Обновляем HP у персонажа
+                // Обновляем HP у персонажа
+                const hp = selectedCharacter.hp - totalDamage; 
+                selectedCharacter.hp = hp;
+
+                console.log(`Updated HP for character ${selectedCharacter.id}: ${selectedCharacter.hp}`);
+
+                console.log(`Total damage after armor absorption for character ${selectedCharacter.id}: ${totalDamage}`);
+
+
+                updateArmorCellDisplaydamagehp(currentCharacterId);
+                closedamagehpModal(currentCharacterId);
+                resetdamagehpFields(currentCharacterId);
+                updateHPBarWidth(currentCharacterId);  
+                console.log(`Updated HP for character ${selectedCharacter.id}: ${selectedCharacter.hp}`);
+            } else {
+                console.log("No character found.");
+            }
+                
+
+        function updateArmorCellDisplaydamagehp(characterId) {
+            const cell = document.querySelector(`.hp-cell[data-character-id="${characterId}"]`);      
+            if (cell) {
+                const selectedCharacter = characters.find(char => char.id == characterId);
+                
+                if (selectedCharacter) {
+                    const damageHpText = `${selectedCharacter.hp} ${selectedCharacter.max_hp}`;
+                    
+                    // Находим внутренний span и обновляем его атрибуты
+                    const spanElement = cell.querySelector('.hp-text');
+                    if (spanElement) {
+                        spanElement.setAttribute('data-top-text', selectedCharacter.hp);
+                        spanElement.setAttribute('data-bottom-text', selectedCharacter.max_hp);
+                    } else {
+                        console.error("Inner span with class 'hp-text' not found in HP cell");
+                    }
+                } else {
+                    console.error("Character with ID", characterId, "not found");
+                }
+            } else {
+                console.error("HP cell not found for character ID", characterId);
+            }
+        }
+
+     
+
+
+
+
+
+
+        function resetdamagehpFields() {
+            // Сброс полей урона
+            document.getElementById('helmetValuehp').value = '';
+            document.getElementById('amuletValuehp').value = '';
+            document.getElementById('ringValuehp').value = '';
+            document.getElementById('earringValuehp').value = '';
+            document.getElementById('leftArmorValuehp').value = '';
+            document.getElementById('leftShouldersValuehp').value = '';
+            document.getElementById('leftBraceletsValuehp').value = '';
+            document.getElementById('leftGlovesValuehp').value = '';
+            document.getElementById('leftPantsValuehp').value = '';
+            document.getElementById('leftBootsValuehp').value = '';
+            document.getElementById('cloakValuehp').value = '';
+            document.getElementById('beltValuehp').value = '';
+            document.getElementById('secondRingValuehp').value = '';
+            document.getElementById('secondEarringValuehp').value = '';
+            document.getElementById('rightArmorValuehp').value = '';
+            document.getElementById('rightShouldersValuehp').value = '';
+            document.getElementById('rightBraceletsValuehp').value = '';
+            document.getElementById('rightGlovesValuehp').value = '';
+            document.getElementById('rightPantsValuehp').value = '';
+            document.getElementById('rightBootsValuehp').value = '';
+
+            // Сброс полей критического урона
+            document.getElementById('helmetcrit').value = '';
+            document.getElementById('amuletcrit').value = '';
+            document.getElementById('ringcrit').value = '';
+            document.getElementById('earringcrit').value = '';
+            document.getElementById('leftArmorcrit').value = '';
+            document.getElementById('leftShoulderscrit').value = '';
+            document.getElementById('leftBraceletscrit').value = '';
+            document.getElementById('leftGlovescrit').value = '';
+            document.getElementById('leftPantscrit').value = '';
+            document.getElementById('leftBootscrit').value = '';
+            document.getElementById('cloakcrit').value = '';
+            document.getElementById('beltcrit').value = '';
+            document.getElementById('secondRingcrit').value = '';
+            document.getElementById('secondEarringcrit').value = '';
+            document.getElementById('rightArmorcrit').value = '';
+            document.getElementById('rightShoulderscrit').value = '';
+            document.getElementById('rightBraceletscrit').value = '';
+            document.getElementById('rightGlovescrit').value = '';
+            document.getElementById('rightPantscrit').value = '';
+            document.getElementById('rightBootscrit').value = '';
+        }
+
+
+        function closedamagehpModal() {
+            const adddamagehpModal = document.getElementById('adddamagehpModal');
+            adddamagehpModal.style.display = 'none';
+        }
+    }
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function updateHPBarWidth(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            if (selectedCharacter) {
+                const hpPercent = (selectedCharacter.hp / selectedCharacter.max_hp) * 100;
+                const hpCell = document.querySelector(`.hp-cell[data-character-id="${characterId}"]`);
+                
+                if (hpCell) {
+                    const decreasingPercent = hpPercent;
+
+                    // Устанавливаем стили для ячейки HP
+                    hpCell.style.background = `
+                        linear-gradient(
+                            to right, 
+                            #F08080 ${decreasingPercent}%, 
+                            white ${decreasingPercent}%, 
+                            white ${100 - decreasingPercent}%
+                        )
+                    `;
+
+                    // Применяем стили к тексту внутри ячейки
+                    const hpText = hpCell.querySelector('.hp-text');
+                    if (hpText) {
+                        hpText.style.position = 'relative';
+                        hpText.style.display = 'block';
+
+                        const hpTopText = hpText.querySelector('::before');
+                        if (hpTopText) {
+                            hpTopText.style.position = 'absolute';
+                            hpTopText.style.top = '-3px';
+                            hpTopText.style.left = '-5px';
+                            hpTopText.style.fontSize = '20px';
+                            hpTopText.style.lineHeight = '0';
+                            hpTopText.style.textAlign = 'right';
+                        }
+
+                        const hpBottomText = hpText.querySelector('::after');
+                        if (hpBottomText) {
+                            hpBottomText.style.position = 'absolute';
+                            hpBottomText.style.bottom = '0';
+                            hpBottomText.style.left = '85%';
+                            hpBottomText.style.right = '0';
+                            hpBottomText.style.fontSize = '10px';
+                            hpBottomText.style.bottom = '-9px';
+                            hpBottomText.style.lineHeight = '0';
+                            hpBottomText.style.textAlign = 'left';
+                        }
+                    }
+                }
+            
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+        function updateMPBarWidth(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            if (selectedCharacter) {
+                const mpPercent = (selectedCharacter.mp / selectedCharacter.max_mp) * 100;
+                const mpCell = document.querySelector(`.mp-cell[data-character-id="${characterId}"]`);
+                
+                if (mpCell) {
+                    const decreasingPercent2 = mpPercent;
+
+                    // Устанавливаем стили для ячейки MP
+                    mpCell.style.background = `
+                        linear-gradient(
+                            to right, 
+                            #1E90FF ${decreasingPercent2}%, 
+                            white ${decreasingPercent2}%
+                        ),
+                        white ${100 - mpPercent}%
+                    `;
+
+                    // Применяем стили к тексту внутри ячейки
+                    const mpText = mpCell.querySelector('.mp-text');
+                    if (mpText) {
+                        mpText.style.position = 'relative';
+                        mpText.style.display = 'block';
+
+                        const mpTopText = mpText.querySelector('::before');
+                        if (mpTopText) {
+                            mpTopText.style.position = 'absolute';
+                            mpTopText.style.top = '-3px';
+                            mpTopText.style.left = '-5px';
+                            mpTopText.style.fontSize = '20px';
+                            mpTopText.style.lineHeight = '0';
+                            mpTopText.style.textAlign = 'right';
+                        }
+
+                        const mpBottomText = mpText.querySelector('::after');
+                        if (mpBottomText) {
+                            mpBottomText.style.position = 'absolute';
+                            mpBottomText.style.bottom = '0';
+                            mpBottomText.style.left = '85%';
+                            mpBottomText.style.right = '0';
+                            mpBottomText.style.fontSize = '10px';
+                            mpBottomText.style.bottom = '-9px';
+                            mpBottomText.style.lineHeight = '0';
+                            mpBottomText.style.textAlign = 'left';
+                        }
+                    }
+                }
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        let resourceCounters = {};  // Объект для хранения счетчиков ресурсов для каждого персонажа
+
+        document.getElementById('createresourceBtn').addEventListener('click', function() {
+            if (!selectedCharacterId) {
+                alert('Не выбран персонаж для добавления ресурса.');
+                return;
+            }
+
+            // Получение данных из полей модального окна
+            const resourceName = document.getElementById('nameresourceValue').value;
+            const resourceQuantity = parseInt(document.getElementById('numberresourceValue').value, 10);
+            const resourceMaxQuantity = parseInt(document.getElementById('max_numberresourceValue').value, 10);
+
+            // Проверка наличия данных
+            if (resourceName && !isNaN(resourceQuantity) && !isNaN(resourceMaxQuantity)) {
+                const characterKey = `character_${selectedCharacterId}`;
+
+                // Определение максимального номера ресурса для выбранного персонажа
+                let maxResourceNumber = 0;
+                const selectedCharacterIndex = characters.findIndex(char => char.id == selectedCharacterId);
+                if (selectedCharacterIndex !== -1) {
+                    for (const key in characters[selectedCharacterIndex]) {
+                        if (key.startsWith('resources_')) {
+                            const number = parseInt(key.split('_')[1], 10);
+                            if (number > maxResourceNumber) {
+                                maxResourceNumber = number;
+                            }
+                        }
+                    }
+
+                    // Создание новых ключей для ресурса
+                    const resourceFieldName = `resources_${maxResourceNumber + 1}`;
+                    const maxResourceFieldName = `max_resources_${maxResourceNumber + 1}`;
+                    const resourceNameFieldName = `resourcename_${maxResourceNumber + 1}`;
+
+                    // Обновление данных персонажа
+                    characters[selectedCharacterIndex][resourceFieldName] = resourceQuantity;
+                    characters[selectedCharacterIndex][maxResourceFieldName] = resourceMaxQuantity;
+                    characters[selectedCharacterIndex][resourceNameFieldName] = resourceName;
+
+                    // Добавление новой строки в таблицу модального окна
+                    const addresourceModal = document.getElementById('addresourceModal');
+                    const resourceModalContent = addresourceModal.querySelector('.modal-content');
+
+                    // Создание строки с тремя ячейками
+                    const newRow = document.createElement('tr');
+
+                    // Первая ячейка
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = `${resourceName}: ${resourceQuantity} / ${resourceMaxQuantity}`;
+                    newRow.appendChild(nameCell);
+
+                    // Добавление строки в модальное окно
+                    resourceModalContent.appendChild(newRow);
+                }
+
+                // Закрытие модального окна
+                addresourceModal.style.display = 'none';
+            } else {
+                alert('Пожалуйста, заполните все поля корректно.');
+            }
+        });
+
+
+
+
+
+
+
+        function openResourceModalWithInput(event) {
+            const addresourceModal = document.getElementById('addresourceModal');
+            const resourceModalContent = addresourceModal.querySelector('.modal-content');
+
+            // Удаляем ранее созданные элементы с классом resource-label
+            const existingLabels = resourceModalContent.querySelectorAll('.resource-label');
+            existingLabels.forEach(label => {
+                label.remove();
+            });
+
+            // Удаляем все элементы <br>
+            const existingBrElements = resourceModalContent.querySelectorAll('br');
+            existingBrElements.forEach(br => {
+                br.remove();
+            });
+
+            // Показываем модальное окно
+            addresourceModal.style.display = 'block';
+
+            selectedCharacterId = event.currentTarget.getAttribute('data-character-id');
+            console.log("Selected characterId:", selectedCharacterId);
+
+            const selectedCharacter = characters.find(char => char.id == selectedCharacterId);
+            if (!selectedCharacter) {
+                console.error("Character with ID", selectedCharacterId, "not found");
+                return;
+            }
+
+            let counter = 1;
+            while (counter <= 100) {
+                const resourceNameFieldName = `resourcename_${counter}`;
+                const resourceFieldName = `resources_${counter}`;
+                const maxResourceFieldName = `max_resources_${counter}`;
+
+                if (selectedCharacter[resourceFieldName] !== undefined) {
+                    const newResourceLabel = document.createElement('label');
+                    newResourceLabel.classList.add('resource-label');
+                    newResourceLabel.setAttribute('data-resource-index', counter);
+                    newResourceLabel.textContent = `${selectedCharacter[resourceNameFieldName]}: ${selectedCharacter[resourceFieldName]} / ${selectedCharacter[maxResourceFieldName]}`;
+
+                    newResourceLabel.addEventListener('click', function() {
+                        document.getElementById('nameresourceValue').value = selectedCharacter[resourceNameFieldName] || '';
+                        document.getElementById('numberresourceValue').value = selectedCharacter[resourceFieldName] || '';
+                        document.getElementById('max_numberresourceValue').value = selectedCharacter[maxResourceFieldName] || '';
+
+                        // Уберем класс active у всех label и добавим его только текущему
+                        existingLabels.forEach(lbl => lbl.classList.remove('active'));
+                        newResourceLabel.classList.add('active');
+                    });
+
+                    resourceModalContent.appendChild(newResourceLabel);
+                    resourceModalContent.appendChild(document.createElement('br'));
+                }
+
+                counter++;
+            }
+
+            // Заполнение полей модального окна данными персонажа (если нужно)
+            document.getElementById('nameresourceValue').value = selectedCharacter[`resourcename_${selectedCharacterId}`] || '';
+            document.getElementById('numberresourceValue').value = selectedCharacter[`resources_${selectedCharacterId}`] || '';
+            document.getElementById('max_numberresourceValue').value = selectedCharacter[`max_resources_${selectedCharacterId}`] || '';
+        }
+
+
+        // Обработчик для кнопки "Удалить"
+        // Обработчик для кнопки "Удалить"
+        document.getElementById('deleteresourceBtn').addEventListener('click', function() {
+            if (selectedCharacterId) {
+                const selectedCharacterIndex = characters.findIndex(char => char.id == selectedCharacterId);
+
+                if (selectedCharacterIndex !== -1) {
+                    const resourceModalContent = document.getElementById('addresourceModal').querySelector('.modal-content');
+                    const existingLabels = resourceModalContent.querySelectorAll('.resource-label');
+
+                    existingLabels.forEach(label => {
+                        if (label.classList.contains('active')) {
+                            const resourceIndex = label.getAttribute('data-resource-index');
+                            const resourceFieldName = `resources_${resourceIndex}`;
+                            const maxResourceFieldName = `max_resources_${resourceIndex}`;
+                            const resourceNameFieldName = `resourcename_${resourceIndex}`;
+
+                            // Удаляем ресурс из объекта персонажа
+                            delete characters[selectedCharacterIndex][resourceFieldName];
+                            delete characters[selectedCharacterIndex][maxResourceFieldName];
+                            delete characters[selectedCharacterIndex][resourceNameFieldName];
+
+                            // Удаляем соответствующий label
+                            label.remove();
+                        }
+                    });
+                }
+            }
+
+            // Закрытие модального окна
+            const addresourceModal = document.getElementById('addresourceModal');
+            addresourceModal.style.display = 'none';
+        });
+
+
+
+
+
+
+        // Обработчик для кнопки "Редактировать"
+        document.getElementById('recreateresourceBtn').addEventListener('click', function() {
+            const resourceName = document.getElementById('nameresourceValue').value;
+            const resourceQuantity = parseInt(document.getElementById('numberresourceValue').value, 10);
+            const resourceMaxQuantity = parseInt(document.getElementById('max_numberresourceValue').value, 10);
+
+            if (selectedCharacterId) {
+                const selectedCharacterIndex = characters.findIndex(char => char.id == selectedCharacterId);
+
+                if (selectedCharacterIndex !== -1) {
+                    // Находим индекс активного ресурса в модальном окне
+                    const activeResourceIndex = getActiveResourceIndex();
+
+                    if (activeResourceIndex !== -1) {
+                        const resourceFieldName = `resources_${activeResourceIndex}`;
+                        const maxResourceFieldName = `max_resources_${activeResourceIndex}`;
+                        const resourceNameFieldName = `resourcename_${activeResourceIndex}`;
+
+                        characters[selectedCharacterIndex][resourceFieldName] = resourceQuantity;
+                        characters[selectedCharacterIndex][maxResourceFieldName] = resourceMaxQuantity;
+                        characters[selectedCharacterIndex][resourceNameFieldName] = resourceName;
+
+                        // Обновляем текст для соответствующего label
+                        const resourceModalContent = document.getElementById('addresourceModal').querySelector('.modal-content');
+                        const existingLabels = resourceModalContent.querySelectorAll('.resource-label');
+                        
+                        existingLabels.forEach((label, index) => {
+                            if (index === activeResourceIndex) {
+                                label.textContent = `${resourceName}: ${resourceQuantity} / ${resourceMaxQuantity}`;
+                            }
+                        });
+                    }
+                }
+            }
+
+            // Закрытие модального окна
+            const addresourceModal = document.getElementById('addresourceModal');
+            addresourceModal.style.display = 'none';
+        });
+
+        // Функция для определения индекса активного ресурса в модальном окне
+        function getActiveResourceIndex() {
+            const resourceModalContent = document.getElementById('addresourceModal').querySelector('.modal-content');
+            const existingLabels = resourceModalContent.querySelectorAll('.resource-label');
+
+            for (let i = 0; i < existingLabels.length; i++) {
+                if (existingLabels[i].classList.contains('active')) {
+                    return i + 1;  // индекс ресурса начинается с 1, а не с 0
+                }
+            }
+            return -1;  // если активного ресурса нет
+        }
+
+
+
+  
+
+
+
+
+
+
+
+
+        // Обработчик для кнопки "Отмена"
+        document.getElementById('cancelresorcerbtn').addEventListener('click', function() {
+            const addresourceModal = document.getElementById('addresourceModal');
+            addresourceModal.style.display = 'none';
+        });
+
+        // Устанавливаем обработчик события на все ячейки ресурса
+        const resourceCells = document.querySelectorAll('.resource-cell');
+        resourceCells.forEach(cell => {
+            cell.addEventListener('click', openResourceModalWithInput);
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Обработчик клика по кнопке "Оружие"
+        document.getElementById('weaponbutton').addEventListener('click', function() {
+            const activeRow = document.querySelector('.activerow'); // Предполагая, что у активной строки есть класс 'activerow'
+
+            if (activeRow) {
+                const characterId = activeRow.getAttribute('data-character-id');
+                
+                // Открываем модальное окно с оружием для выбранного персонажа
+                openweaponsModal({ currentTarget: { getAttribute: () => characterId } });
+            } else {
+                console.log("No active row selected.");
+            }
+        });
+
+        let weaponCounters = {};  // Объект для хранения счетчиков оружия для каждого персонажа
+
+
+
+
+
+
+        document.getElementById('createweaponBtn').addEventListener('click', function() {
+            // Получение данных из полей модального окна
+            const weaponName = document.getElementById('nameweaponsValue').value;
+            const weaponDamage = parseInt(document.getElementById('damageweaponsValue').value, 10);
+            const weaponMaxDamage = parseInt(document.getElementById('max_damageweaponsValue').value, 10);
+
+            // Проверка наличия данных
+            if (weaponName && !isNaN(weaponDamage) && !isNaN(weaponMaxDamage)) {
+                // Обновляем данные персонажа
+                updateCharacterInArray(currentCharacterId, weaponName, weaponDamage, weaponMaxDamage);
+                
+                // Закрытие модального окна
+                const addweaponsModal = document.getElementById('addweaponsModal');
+                addweaponsModal.style.display = 'none';
+            } else {
+                alert('Пожалуйста, заполните все поля корректно.');
+            }
+        });
+
+        function updateCharacterInArray(characterId, weaponName, weaponDamage, weaponMaxDamage) {
+            const selectedCharacterIndex = characters.findIndex(char => char.id == characterId);
+            if (selectedCharacterIndex !== -1) {
+                // Определение максимального номера оружия для выбранного персонажа
+                let maxWeaponNumber = 0;
+                for (const key in characters[selectedCharacterIndex]) {
+                    if (key.startsWith('weapons_')) {
+                        const number = parseInt(key.split('_')[1], 10);
+                        if (number > maxWeaponNumber) {
+                            maxWeaponNumber = number;
+                        }
+                    }
+                }
+
+                // Создание новых ключей для оружия
+                const weaponFieldName = `weapons_${maxWeaponNumber + 1}`;
+                const weaponNameFieldName = `weaponname_${maxWeaponNumber + 1}`;
+                const weaponMaxDamageFieldName = `weaponmaxdamage_${maxWeaponNumber + 1}`;
+
+                // Обновление данных персонажа
+                characters[selectedCharacterIndex][weaponFieldName] = weaponDamage;
+                characters[selectedCharacterIndex][weaponNameFieldName] = weaponName;
+                characters[selectedCharacterIndex][weaponMaxDamageFieldName] = weaponMaxDamage;
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+
+        function openweaponsModal(event) {
+            const addweaponsModal = document.getElementById('addweaponsModal');
+            const weaponsModalContent = addweaponsModal.querySelector('.modal-content');
+
+            // Удаляем ранее созданный контейнер с оружием
+            const weaponsContainer = weaponsModalContent.querySelector('.weapons-container');
+            if (weaponsContainer) {
+                weaponsContainer.remove();
+            }
+
+            // Показываем модальное окно
+            addweaponsModal.style.display = 'block';
+
+            const selectedCharacterId = event.currentTarget.getAttribute('data-character-id') || event.currentTarget;
+            const selectedCharacter = characters.find(char => char.id == selectedCharacterId);
+
+
+            // Создаем новый контейнер для строк оружия
+            const newWeaponsContainer = document.createElement('div');
+            newWeaponsContainer.classList.add('weapons-container');
+
+            let counter = 1;
+            while (counter <= 100) {
+                const weaponNameFieldName = `weaponname_${counter}`;
+                const weaponFieldName = `weapons_${counter}`;
+                const weaponMaxDamageFieldName = `weaponmaxdamage_${counter}`;
+                const weaponIndex = `weapons_${counter}`;
+
+                if (selectedCharacter[weaponFieldName] !== undefined) {
+                    // Создание новой строки
+                    const newRow = document.createElement('div');
+                    newRow.classList.add('dynamic-row');  // Добавляем класс для идентификации динамически созданных строк
+                    newRow.setAttribute('data-weapon-index', counter);  // Устанавливаем атрибут с индексом оружия
+
+                    // Первая ячейка с информацией о оружии
+                    const nameCell = document.createElement('td');
+                    const nameLabel = document.createElement('label');
+                    nameLabel.style.fontSize = '15px';  // Установка размера шрифта
+                    nameLabel.textContent = `${selectedCharacter[weaponNameFieldName]}: ${selectedCharacter[weaponFieldName]} / ${selectedCharacter[weaponMaxDamageFieldName]}`;
+                    nameCell.style.width = '250px';
+                    nameCell.appendChild(nameLabel);
+
+                    // Вторая ячейка для кнопки удара
+                    const buttonCell = document.createElement('td');
+                    buttonCell.style.width = '80px';
+                    buttonCell.style.textAlign = 'right';  // Выравнивание кнопки по правому краю
+                    const attackButton = document.createElement('button');
+
+                    attackButton.textContent = 'Удар';
+                    attackButton.id = 'attackButton';
+                    buttonCell.appendChild(attackButton);
+                    attackButton.addEventListener('click', function(event) {
+                        const dynamicRow = event.currentTarget.closest('.dynamic-row'); 
+                        if (dynamicRow) {
+                            const weaponFieldName = dynamicRow.getAttribute('data-weapon-index'); 
+                            recordAttackData(selectedCharacterId, weaponFieldName);
+
+                        } else {
+                            console.error("Dynamic row not found");
+                        }
+                    }.bind(attackButton));
+
+
+
+                    // Добавляем ячейки в строку
+                    newRow.appendChild(nameCell);
+                    newRow.appendChild(buttonCell);
+
+                    // Добавляем обработчик клика по строке
+                    newRow.addEventListener('click', function() {
+                        // Убираем класс 'active' у всех строк
+                        const existingRows = weaponsModalContent.querySelectorAll('.dynamic-row');
+                        existingRows.forEach(row => {
+                            row.classList.remove('active');
+                        });
+
+                        // Добавляем класс 'active' к выбранной строке
+                        this.classList.add('active');
+
+                        const weaponIndex = this.getAttribute('data-weapon-index');
+                        document.getElementById('nameweaponsValue').value = selectedCharacter[`weaponname_${weaponIndex}`] || '';
+                        document.getElementById('damageweaponsValue').value = selectedCharacter[`weapons_${weaponIndex}`] || '';
+                        document.getElementById('max_damageweaponsValue').value = selectedCharacter[`weaponmaxdamage_${weaponIndex}`] || '';
+                    });
+
+                    // Добавляем строку в контейнер
+                    newWeaponsContainer.appendChild(newRow);
+                }
+
+                counter++;
+            }
+
+            // Добавляем контейнер с оружием в модальное окно
+            weaponsModalContent.appendChild(newWeaponsContainer);
+        }
+
+
+        // Функция для определения индекса активного оружия в модальном окне
+        function getActiveWeaponIndex() {
+            const weaponsModalContent = document.getElementById('addweaponsModal').querySelector('.modal-content');
+            const existingRows = weaponsModalContent.querySelectorAll('.dynamic-row');
+
+            for (let i = 0; i < existingRows.length; i++) {
+                if (existingRows[i].classList.contains('active')) {
+                    return i + 1;  // индекс оружия начинается с 1, а не с 0
+                }
+            }
+            return -1;  // если активного оружия нет
+        }
+
+
+        // Обработчик для кнопки "Редактировать"
+        document.getElementById('recreateweaponBtn').addEventListener('click', function() {
+            console.log("recreateweaponBtn clicked");
+
+            const weaponName = document.getElementById('nameweaponsValue').value;
+            const weaponDamage = parseInt(document.getElementById('damageweaponsValue').value, 10);
+            const weaponMaxDamage = parseInt(document.getElementById('max_damageweaponsValue').value, 10);
+
+            if (!currentCharacterId) {
+                console.error("currentCharacterId is not set");
+                return;
+            }
+
+            const selectedCharacterIndex = characters.findIndex(char => char.id == currentCharacterId);
+            if (selectedCharacterIndex === -1) {
+                console.error("Character with ID", currentCharacterId, "not found");
+                return;
+            }
+
+            const selectedCharacter = characters[selectedCharacterIndex];  // Получаем выбранного персонажа
+
+            // Находим индекс активной строки в модальном окне
+            const activeRowIndex = getActiveWeaponIndex();
+            if (activeRowIndex === -1) {
+                console.error("No active row selected");
+                return;
+            }
+
+            const weaponFieldName = `weapons_${activeRowIndex}`;
+            const weaponNameFieldName = `weaponname_${activeRowIndex}`;
+            const weaponMaxDamageFieldName = `weaponmaxdamage_${activeRowIndex}`;
+
+            // Обновляем данные в объекте selectedCharacter
+            selectedCharacter[weaponFieldName] = weaponDamage;
+            selectedCharacter[weaponNameFieldName] = weaponName;
+            selectedCharacter[weaponMaxDamageFieldName] = weaponMaxDamage;
+
+            // Обновляем значения в input для соответствующего оружия
+            document.getElementById('nameweaponsValue').value = weaponName;
+            document.getElementById('damageweaponsValue').value = weaponDamage;
+            document.getElementById('max_damageweaponsValue').value = weaponMaxDamage;
+
+            // Обновляем текст в строке оружия
+            const weaponsModalContent = document.getElementById('addweaponsModal').querySelector('.modal-content');
+            const existingRows = weaponsModalContent.querySelectorAll('.dynamic-row');
+
+            existingRows.forEach((row, index) => {
+                if (index + 1 === activeRowIndex) {
+                    const nameCell = row.querySelector('td:first-child');
+                    if (nameCell) {
+                        nameCell.textContent = `${weaponName}: ${weaponDamage} / ${weaponMaxDamage}`;
+                    }
+                }
+            });
+        });
+
+        // Обработчик для кнопки "Удалить"
+        document.getElementById('deleteweaponBtn').addEventListener('click', function() {
+            console.log("deleteweaponBtn clicked");
+
+            if (!currentCharacterId) {
+                console.error("currentCharacterId is not set");
+                return;
+            }
+
+            const selectedCharacterIndex = characters.findIndex(char => char.id == currentCharacterId);
+            if (selectedCharacterIndex === -1) {
+                console.error("Character with ID", currentCharacterId, "not found");
+                return;
+            }
+
+            const selectedCharacter = characters[selectedCharacterIndex];  // Получаем выбранного персонажа
+
+            // Находим индекс активной строки в модальном окне
+            const activeRowIndex = getActiveWeaponIndex();
+            if (activeRowIndex === -1) {
+                console.error("No active row selected");
+                return;
+            }
+
+            const weaponFieldName = `weapons_${activeRowIndex}`;
+            const weaponNameFieldName = `weaponname_${activeRowIndex}`;
+            const weaponMaxDamageFieldName = `weaponmaxdamage_${activeRowIndex}`;
+
+            // Удаляем данные из объекта selectedCharacter
+            delete selectedCharacter[weaponFieldName];
+            delete selectedCharacter[weaponNameFieldName];
+            delete selectedCharacter[weaponMaxDamageFieldName];
+
+            // Очищаем значения в input для соответствующего оружия
+            document.getElementById('nameweaponsValue').value = '';
+            document.getElementById('damageweaponsValue').value = '';
+            document.getElementById('max_damageweaponsValue').value = '';
+
+            // Удаляем текст в строке оружия
+            const weaponsModalContent = document.getElementById('addweaponsModal').querySelector('.modal-content');
+            const existingRows = weaponsModalContent.querySelectorAll('.dynamic-row');
+
+            existingRows.forEach((row, index) => {
+                if (index + 1 === activeRowIndex) {
+                    const nameCell = row.querySelector('td:first-child');
+                    if (nameCell) {
+                        nameCell.textContent = '';
+                    }
+                }
+            });
+
+            openweaponsModal('addweaponsModal'); // Закрытие модального окна после удаления данных
+        });
+
+
+
+        // Функция для закрытия модального окна
+        function closeModal1(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('show'); // Удаляем класс 'show', который отвечает за отображение модального окна
+            modal.style.display = 'none'; // Устанавливаем стиль display в 'none', чтобы скрыть модальное окно
+            document.body.classList.remove('modal-open'); // Удаляем класс 'modal-open' из <body>, если он был добавлен
+        }
+
+        // Обработчик для закрытия модального окна при нажатии
+
+
+
+        // Обработчик для кнопки "Отмена"
+        document.getElementById('cancelweaponrbtn').addEventListener('click', function() {
+            const addweaponsModal = document.getElementById('addweaponsModal');
+            addweaponsModal.style.display = 'none';
+        });
+
+
+
+
+
+
+
+
+        function recordAttackData(characterId, weaponIndex) {
+            // Устанавливаем значения в глобальные переменные
+            characterIDhit = characterId;
+            characterweaponID = weaponIndex; 
+
+            // Выводим записанные данные в консоль для проверки
+            console.log(`Character ID: ${characterIDhit}`);
+            console.log(`Weapon index: ${characterweaponID}`);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        function setSelectedCharacterNamedamagehit(characterId) {
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            
+            if (selectedCharacter) {
+                const nameLabel = document.getElementById('SelectedCharacterNamedamagehit');
+                nameLabel.textContent = selectedCharacter.name;
+                nameLabel.style.fontSize = '50px';
+                nameLabel.style.fontWeight = 'bold';
+
+            } else {
+                console.error("Character with ID", characterId, "not found");
+            }
+        }
+
+
+
+
+
+
+
+        // Обработчик для кнопки "Урон"
+        document.getElementById('damagetakenbutton').addEventListener('click', function() {
+            openDamagehitModal();
+        });
+
+
+
+
+
+
+
+
+        function openDamagehitModal() {
+            console.log("Damagehit button clicked");
+            
+            const characterId = currentCharacterId; // Получаем ID персонажа из characterIDhit
+            console.log("Current character ID:", characterId);
+
+            
+            // Проверяем, что ID существует и является числом
+            if (characterId && !isNaN(characterId)) {
+                const selectedCharacter = characters.find(char => char.id == characterId);
+                if (selectedCharacter) {
+                    console.log("Selected character:", selectedCharacter);
+                    
+                    // Устанавливаем имя выбранного персонажа в модальное окно
+                    document.getElementById('SelectedCharacterNamedamagehit').textContent = selectedCharacter.name;
+
+                    // Открываем модальное окно
+                    const adddamagehitModal = document.getElementById('adddamagehitModal');
+                    adddamagehitModal.style.display = 'block';
+
+                    // Добавляем обработчик клика по кнопке "Выход"
+                    const closeDamageHpModalBtn = document.getElementById('closeDamageHpModalBtn');
+                    closeDamageHpModalBtn.addEventListener('click', function() {
+                        adddamagehitModal.style.display = 'none';
+                    });
+
+                    // Добавляем обработчик клика по элементам брони
+                    const armorElements = document.querySelectorAll('.equipment-input'); // предполагается, что у вас есть класс .armor-element для всех элементов брони
+
+                    armorElements.forEach(element => {
+                        element.addEventListener('click', function(event) {
+                            applydamagehitChanges(event.target.id);
+                        });
+                    });
+
+                } else {
+                    console.error("Character with ID", characterId, "not found");
+                }
+            } else {
+                console.error("Invalid character ID:", characterId);
+            }
+        }
+
+
+
+
+
+        function applydamagehitChanges(armorElementId) {
+            const characterId = currentCharacterId;
+
+            console.log("Applying changes for character ID:", characterId);
+
+            const selectedCharacter = characters.find(char => char.id == characterId);
+            console.log("Selected Character:", selectedCharacter);
+
+            if (selectedCharacter) {
+                // Формируем имя поля оружия на основе weaponIndex
+                const weaponFieldName = `weapons_${characterweaponID}`;
+                
+                // Получаем значение урона оружия, брони персонажа и критического урона персонажа
+                const weaponDamage = parseInt(selectedCharacter[weaponFieldName] || '0', 10);
+                const helmetDefense = parseInt(selectedCharacter.helmet || '0', 10);
+                const critDamage = parseInt(selectedCharacter.helmetcrit || '1', 10); // Критический урон для шлема
+
+                // Вычисляем урон с учетом критического урона и брони
+                let totalDamage = (weaponDamage * critDamage) - helmetDefense;
+                if (totalDamage < 0) {
+                    totalDamage = 0;
+                }
+
+                console.log(`Weapon: ${weaponFieldName} (${weaponDamage} damage)`);
+                console.log(`Helmet defense: ${helmetDefense}`);
+                console.log(`Crit damage: ${critDamage}`);
+                console.log(`Total damage after armor absorption and crit: ${totalDamage}`);
+
+                // Обновляем HP у персонажа
+                let hp = parseInt(selectedCharacter.hp || '0', 10);
+                hp -= (totalDamage > 0) ? totalDamage : 0;
+
+                console.log(`Updated HP for character ${characterId}: ${hp}`);
+
+                if (hp < 0) {
+                    hp = -hp;
+                }
+
+                // Обновляем значение HP в объекте персонажа
+                selectedCharacter.hp = hp;
+
+                // Обновляем отображение брони и HP
+                updateArmorCellDisplayHP(characterId, hp);
+                updateHPBarWidth(characterId);       
+                updateFightDisplay(weaponFieldName, weaponDamage, helmetDefense, critDamage, totalDamage, hp, critDamage);
+            
+            } else {
+                console.log("No character found.");
+            }
+        }
+
+
+
+
+
+        function updateFightDisplay(weaponFieldName, weaponDamage, helmetDefense, armorDamage, totalDamage, hp,critDamage) {
+            const fightDisplay = `
+                Урон: ${weaponDamage} * ${critDamage} - ${helmetDefense} = ${totalDamage}<br>
+                HP: ${hp}
+            `;
+
+            const fightDisplayElement = document.getElementById('fightdisply');
+            if (fightDisplayElement) {
+                fightDisplayElement.innerHTML = fightDisplay;
+                fightDisplayElement.style.textAlign = 'left';    // Выравнивание по левому краю
+                fightDisplayElement.style.fontSize = '18px';     // Уменьшение размера шрифта
+                fightDisplayElement.style.marginLeft = '10px';   // Отступ слева
+            } else {
+                console.error("Fight display element not found");
+            }
+        }
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('closeDamageHpModalBtn2').addEventListener('click', closeDamagehitModal);
+        });
+
+
+        function closeDamagehitModal() {
+            const adddamagehitModal = document.getElementById('adddamagehitModal');
+            
+            if (adddamagehitModal && adddamagehitModal.style) {
+                console.log("Before hiding modal");
+                adddamagehitModal.style.display = 'none';
+                console.log("After hiding modal");
+            } else {
+                console.error("Modal not found or style cannot be modified");
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        document.getElementById('characteristic1button').addEventListener('click', function() {
+            const characterForm = document.getElementById('characterForm');
+            
+            // Если currentCharacterId не установлен, попробуйте получить его из выбранной ячейки
+            if (!currentCharacterId) {
+                const selectedCell = document.querySelector('.idcharacters.active');
+                if (selectedCell) {
+                    currentCharacterId = selectedCell.getAttribute('data-character-id');
+                    console.log('Current character ID:', currentCharacterId); // Добавляем лог для отладки
+                } else {
+                    console.log('No character selected'); // Добавляем лог для отладки
+                    currentCharacterId = null; // Сбросить currentCharacterId, если персонаж не выбран
+                }
+            }
+            
+            loadCharacterData(); // Загружаем данные перед открытием формы
+            characterForm.style.display = 'block';
+        });
+
+
+        function selectCharacter(id) {
+            currentCharacterId = id;
+            console.log('Selected character ID:', currentCharacterId); // Добавляем лог для отладки
+            loadCharacterData(); // Загружаем данные для выбранного персонажа
+            createSectionHeaders();
+
+        }
+
+
+        function loadCharacterData() {
+            const characterIdElement = document.getElementById('characterId');
+            const characterNameElement = document.getElementById('characterName');
+            
+            const selectedCharacter = characters.find(char => char.id == currentCharacterId);
+
+            if (selectedCharacter) {
+                console.log('Loading character with ID:', currentCharacterId); // Добавляем лог для отладки
+                characterIdElement.textContent = `ID: ${currentCharacterId}`;
+                characterNameElement.textContent = `Имя: ${selectedCharacter.name || 'Неизвестно'}`;
+                
+                // Загрузка характеристик, навыков и скиллов
+                loadSection('characteristics', selectedCharacter.characteristics || {});
+                loadSection('abilities', selectedCharacter.abilities || {});
+                loadSection('skills', selectedCharacter.skills || {});
+            } else {
+                console.log('Character with ID:', currentCharacterId, 'not found'); // Добавляем лог для отладки
+                characterIdElement.textContent = 'ID: Неизвестно';
+                characterNameElement.textContent = 'Имя: Неизвестно';
+                createSectionHeaders();
+            }
+        }
+
+
+        function createSectionHeaders() {
+            const sections = ['characteristics', 'abilities', 'skills'];
+
+            sections.forEach(section => {
+                const table = document.getElementById(section).querySelector('tbody');
+
+                // Добавляем заголовок, если он еще не был добавлен
+                if (table.querySelectorAll('tr').length === 0) {
+                    const headerRow = table.insertRow();
+                    const headerCell = headerRow.insertCell(0);
+                    headerCell.colSpan = 2; // Устанавливаем colspan для ячейки заголовка
+                    headerCell.textContent = section.charAt(0).toUpperCase() + section.slice(1); // Преобразуем первую букву в заглавную
+                }
+            });
+        }
+
+
+        function loadSection(sectionId, data) {
+            const table = document.getElementById(sectionId).querySelector('tbody');
+            
+
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const row = table.insertRow();
+                    const cell1 = row.insertCell(0);
+                    const cell2 = row.insertCell(1);
+                    
+                    cell1.innerHTML = key.replace('_name', '').replace('_description', '');
+                    cell2.innerHTML = data[key];
+                }
+            }
+        }
+
+
+        function logCharacterData() {
+            console.log('Character Data:', characters);
+        }
+
+        function addCharacteristic() {
+            let characteristicName = prompt("Введите название характеристики:");
+            let characteristicValue = prompt("Введите числовое значение для характеристики " + characteristicName + ":");
+            
+            if (!characters[currentCharacterId]) {
+                characters[currentCharacterId] = { id: currentCharacterId, name: 'Неизвестно', characteristics: {} };
+            }
+            
+            const counter = `characteristic_${Object.keys(characters[currentCharacterId].characteristics).length + 1}`;
+            characters[currentCharacterId].characteristics[`${counter}_name`] = characteristicName;
+            characters[currentCharacterId].characteristics[`${counter}_value`] = characteristicValue;
+            
+            addRow('characteristics', characteristicName, characteristicValue);
+            logCharacterData();
+        }
+
+        function addAbility() {
+            let abilityName = prompt("Введите название навыка:");
+            let abilityValue = prompt("Введите числовое значение для навыка " + abilityName + ":");
+            
+            if (!characters[currentCharacterId]) {
+                characters[currentCharacterId] = { id: currentCharacterId, name: 'Неизвестно', abilities: {} };
+            }
+            
+            const counter = `ability_${Object.keys(characters[currentCharacterId].abilities).length + 1}`;
+            characters[currentCharacterId].abilities[`${counter}_name`] = abilityName;
+            characters[currentCharacterId].abilities[`${counter}_value`] = abilityValue;
+            
+            addRow('abilities', abilityName, abilityValue);
+            logCharacterData();
+        }
+
+        function addSkills() {
+            let skillsName = prompt("Введите название скилла:");
+            let skillsDescription = prompt("Введите описание скилла " + skillsName + ":");
+            
+            if (!characters[currentCharacterId]) {
+                characters[currentCharacterId] = { id: currentCharacterId, name: 'Неизвестно', skills: {} };
+            }
+            
+            const counter = `skill_${Object.keys(characters[currentCharacterId].skills).length + 1}`;
+            characters[currentCharacterId].skills[`${counter}_name`] = skillsName;
+            characters[currentCharacterId].skills[`${counter}_description`] = skillsDescription;
+            
+            addRow('skills', skillsName, skillsDescription);
+            logCharacterData();
+        }
+
+        function addRow(sectionId, name, value) {
+            const table = document.getElementById(sectionId).querySelector('tbody');
+
+            // Вызываем функцию для создания заголовков
+            createSectionHeaders();
+
+            const row = table.insertRow();
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            
+            cell1.innerHTML = name;
+            cell2.innerHTML = value;
+        }
+
+
+
+        function closeModalcharacteristic() {
+            const characterForm = document.getElementById('characterForm');
+            characterForm.style.display = 'none';
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
